@@ -1,0 +1,31 @@
+.sidebar
+    background-color: #5CCCCC
+    width: 200px
+    padding: 20px
+    .links
+        display: flex
+        flex-direction: column
+        gap: 20px
+        a
+            text-decoration: none
+            color: black
+            font-family: sans-serif
+            font-size: 20px
+        .exitButton
+            outline: none
+            background: tomato
+            border: solid 1px tomato
+            color: white
+            padding: 7px
+            font-family: 'Roboto', sans-serif
+            text-transform: uppercase
+            border-radius: 15px
+            font-size: 16px
+            letter-spacing: 1.2px
+            &:hover
+                transition: .1s
+                border-color: red
+                background: red
+                cursor: pointer
+            &:not(:hover)
+                transition: .1s
