@@ -110,7 +110,7 @@ const ProfileReducer = (state: initialStateType = initialState , action: AnyActi
         case ActionCreatorsTypes.SET_MY_PROFILE_IMAGES: {
             return {
                 ...state,
-                profileImages: action.profileImages
+                myProfileImages: action.profileImages
             }
         }
         case ActionCreatorsTypes.SET_ISOWNER: {
@@ -152,13 +152,13 @@ export const setIsLoadingAC = (value: boolean): setIsLoadingACTypes => {
     }
 }
 
-export const setPhotosAC = (largePhoto: string, smallPhoto: string): setPhotosACTypes => {
+/*export const setPhotosAC = (largePhoto: string, smallPhoto: string): setPhotosACTypes => {
     return {
         type: ActionCreatorsTypes.SET_PHOTOS,
         large: largePhoto,
         small: smallPhoto
     }
-}
+}*/
 
 export const setMyProfileImagesAC = (images: profileImagesType): setMyProfileImagesType => {
     return {
@@ -211,10 +211,12 @@ export const getStatusThunk = (userId: number): ThunkType => {
     }
 }
 
-export const setPhotosThunk = (): ThunkType => async dispatch => {
-    let response = await profileAPI.setPhoto()
-    if (response.resultCode === 0)
-        dispatch(setPhotosAC(response.data.large, response.data.small))
+export const setPhotosThunk = (file: any): ThunkType => async dispatch => {
+    let response = await profileAPI.setPhoto(file)
+    
+    if (response.resultCode === 0) {
+        dispatch(setMyProfileImagesAC(response.data.photos))
+    }
 }
 
 export const getProfileThunk = (userId: number, setMyProfileImages?: boolean): ThunkType => async dispatch => {

@@ -33,6 +33,8 @@ const mdtp = (dispatch: appDispatchType): mdtpType => {
 }
 
 const Header: React.FC<props> = ({ userAvatar, isAuthorized, login }): JSX.Element => {
+    console.log(userAvatar);
+    
     return (
         <header className={cn(styles.header, 'header')}>
             <div className={cn(styles.header__container, 'container')}>

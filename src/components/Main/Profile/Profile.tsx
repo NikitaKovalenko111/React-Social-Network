@@ -1,6 +1,6 @@
 import cn from 'classnames'
 import styles from './Profile.module.sass'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import image from './../../../images/profile-image.jpg'
 import { setStatusThunk, setPhotosThunk, getProfileThunk, setOwnerAC, getStatusThunk, setIsLoadingAC } from '../../../redux/reducers/profile-reducer'
 import { appDispatchType, appStateType } from './../../../redux/store'
@@ -18,96 +18,109 @@ import facebook from '../../../images/facebook.svg'
 import { contactsTypes } from '../../../types/types'
 import Redirect from "../../../hoc/Redirect"
 import Preloader from '../../common/Preloader/Preloader'
-
-type ProfilePropsType = {
-    aboutMe: string | null
-    status: string
-    photo: string
-    isOwner: boolean
-    fullName: string
-    lookingForAJob: boolean | null
-    lookingForAJobDescription: string
-    contacts: contactsTypes
-    isLoading: boolean
-
-    setStatus: (status: string) => void
-    setIsLoading: (value: boolean) => void
-}
+import { Formik } from 'formik';
+import { getAboutMeSelector, getContactsSelector, getFullNameSelector, getIsLoadingSelector, getIsOwnerSelector, getLookingForAJobSelector, getLookingForAJobDescriptionSelector, getMyPhotoSelector, getStatusSelector, getUserPhotoSelector, getUserIdSelector } from '../../../selectors/profile-selectors'
+import { useDispatch } from 'react-redux'
 
 type UriParams = {
     userId?: number
 }
 
-type ProfileApiPropsType = mstpType & mdtpType
+type ProfilePropsType = {}
 
-type mdtpType = {
-    setStatus: (status: string) => void
-    setPhotos: () => void
-    setIsOwner: (value: boolean) => void
-    getProfile: (userId: number | null) => void
-    getStatus: (userId: number | null) => void
-    setIsLoading: (value: boolean) => void
-}
+const Profile: React.FC<ProfilePropsType> = (): JSX.Element => {
+    
+    const isLoading: boolean = useSelector(getIsLoadingSelector)
+    const isOwner: boolean = useSelector(getIsOwnerSelector)
+    const status: string = useSelector(getStatusSelector)
+    const MyPhoto: string = useSelector(getMyPhotoSelector)
+    const UserPhoto: string = useSelector(getUserPhotoSelector)
+    const fullName: string = useSelector(getFullNameSelector)
+    const lookingForAJob: boolean | null = useSelector(getLookingForAJobSelector)
+    const lookingForAJobDescription: string = useSelector(getLookingForAJobDescriptionSelector)
+    const aboutMe: string | null = useSelector(getAboutMeSelector)
+    const contacts: contactsTypes = useSelector(getContactsSelector)
+    const userId: number | null = useSelector(getUserIdSelector)
 
-type mstpType = {
-    photo: string
-    aboutMe: string | null
-    status: string
-    isOwner: boolean
-    lookingForAJob: boolean | null
-    lookingForAJobDescription: string
-    fullName: string
-    contacts: contactsTypes
-    userId: number | null
-    isLoading: boolean
-}
+    const dispatch: appDispatchType = useDispatch()
 
-const mstp = (state: appStateType): mstpType => { 
-    return {
-        isOwner: state.profile.isOwner,
-        aboutMe: state.profile.aboutMe,
-        photo: state.profile.profileImages.large,
-        status: state.profile.status,
-        lookingForAJob: state.profile.lookingForAJob,
-        lookingForAJobDescription: state.profile.lookingForAJobDescription,
-        fullName: state.profile.fullName,
-        contacts: state.profile.contacts,
-        userId: state.auth.userId,
-        isLoading: state.profile.isLoading
+    const getStatus = (userId: number | null) => {
+        dispatch(getStatusThunk(userId as number))
     }
-}
-
-const mdtp = (dispatch: appDispatchType): mdtpType => {
-    return {
-        setStatus: (status: string) => {
-            dispatch(setStatusThunk(status))
-        },
-        setIsLoading: (value: boolean) => {
-            dispatch(setIsLoadingAC(value))
-        },
-        setIsOwner: (value: boolean) => {
-            dispatch(setOwnerAC(value))
-        },
-        setPhotos: () => {
-            dispatch(setPhotosThunk())
-        },
-        getProfile: (userId: number | null) => {
-            dispatch(getProfileThunk(userId as number))
-        },
-        getStatus: (userId: number | null) => {
-            dispatch(getStatusThunk(userId as number))
-        }
+    const getProfile = (userId: number | null) => {
+        dispatch(getProfileThunk(userId as number))
     }
-}
-
-const Profile: React.FC<ProfilePropsType> = ({setIsLoading, isLoading, isOwner, status, setStatus, photo, fullName, lookingForAJob, lookingForAJobDescription, aboutMe, contacts }): JSX.Element => {
+    const setPhotos = (file: File | null) => {
+        dispatch(setPhotosThunk(file))
+    }
+    const setIsOwner = (value: boolean) => {
+        dispatch(setOwnerAC(value))
+    }
+    const setIsLoading = (value: boolean) => {
+        dispatch(setIsLoadingAC(value))
+    }
+    const setStatus = (status: string) => {
+        dispatch(setStatusThunk(status))
+    }
 
     let counter = 0
+
+    const params: UriParams = useParams() 
+
+    useEffect(() => {
+        getProfile(Number(params.userId)) 
+        getStatus(Number(params.userId))
+        if (userId === Number(params.userId))
+            setIsOwner(true)
+        else setIsOwner(false)
+    }, [params.userId])
+
+    if (isLoading) {
+        return <Preloader />
+    }
 
     return (
         <main className={cn(styles.main, 'main')}>
             <div className={cn(styles.infoBlock)}>
-                <img width='400px' src={ photo ? photo : image } alt="image" />
+                <Formik initialValues={{ file: null }}
+                    onSubmit={ async (values, { setSubmitting }) => {   
+                        console.log(values.file);
+                        
+                        let response = await setPhotos(values.file)                
+                        setSubmitting(false)
+                    }}
+                        >
+                    {({
+                        values,
+                        handleSubmit,
+                        isSubmitting,
+                        handleChange,
+                        submitForm, 
+                        setFieldValue,
+                    }) => (
+                    <form onSubmit={handleSubmit} className={cn(styles.avatarWrapper, {[styles.avatarWrapperIsOwner]: isOwner})}>
+                        { !isOwner &&
+                            <div>
+                                <img className={cn(styles.avatar)} width='400px' src={ isOwner && MyPhoto ? MyPhoto : !isOwner && UserPhoto ? UserPhoto : image } alt="image" />
+                            </div>
+                        }
+                        { isOwner && 
+                            <div className={cn(styles.div)}>
+                                <img className={cn(styles.avatar) } width='400px' src={ isOwner && MyPhoto ? MyPhoto : !isOwner && UserPhoto ? UserPhoto : image } alt="image" />
+                                <div className={cn(styles.parent) }>
+                                    <label htmlFor='fileInput'>
+                                        <input type="file" name='file' onChange={(event) => {
+                                            if (event.target.files) {
+                                                setFieldValue('file', event.target.files[0])
+                                            }
+                                            submitForm()
+                                        }} id='fileInput' accept='image/*' disabled={isSubmitting} />
+                                    </label>
+                                </div>
+                            </div>
+                        }
+                    </form> )}
+                </Formik>
                 <div className={cn(styles.right_side)}>
                     <p className={cn(styles.fullname)}>{ fullName }</p>
                     <Status setIsLoading={setIsLoading} isLoading={isLoading} isOwner={isOwner} setStatus={setStatus} status={status} />
@@ -133,22 +146,4 @@ const Profile: React.FC<ProfilePropsType> = ({setIsLoading, isLoading, isOwner, 
     )
 }
 
-const ProfileAPI: React.FC<ProfileApiPropsType> = React.memo(({setIsLoading, setIsOwner, getStatus, isOwner, status, setStatus, photo, getProfile, fullName, lookingForAJob, lookingForAJobDescription, contacts, userId, aboutMe, isLoading }): JSX.Element => {
-    const params: UriParams = useParams() 
-
-    useEffect(() => {
-        getProfile(Number(params.userId)) 
-        getStatus(Number(params.userId))
-        if (userId === Number(params.userId))
-            setIsOwner(true)
-        else setIsOwner(false)
-    }, [params.userId])
-
-    if (isLoading) {
-        return <Preloader />
-    }
-
-    return <Profile setIsLoading={setIsLoading} isLoading={isLoading} isOwner={isOwner} aboutMe={aboutMe} fullName={fullName} lookingForAJob={lookingForAJob} lookingForAJobDescription={lookingForAJobDescription} contacts={contacts} photo={photo} setStatus={setStatus} status={status} />
-})
-
-export default compose(connect(mstp, mdtp), Redirect)(ProfileAPI) as React.FC
+export default compose(Redirect)(Profile) as React.FC

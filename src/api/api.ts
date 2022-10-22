@@ -5,7 +5,7 @@ import { contactsTypes, defaultResponseType, profileImagesType, trackType, UserT
 
 export interface profileAPI {
     setStatus: (status: string) => Promise<setStatusResponseType>
-    setPhoto: () => Promise<setPhotoResponseType>
+    setPhoto: (image: any) => Promise<setPhotoResponseType>
     getProfile: (userId: number) => Promise<getProfileResponseType>
     getStatus: (userId: number) => Promise<getStatusResponseType>
 }
@@ -53,7 +53,9 @@ export interface getFollowStatusResponseType {
 }
 
 export interface setPhotoResponseType extends defaultResponseType {
-    readonly data: profileImagesType
+    readonly data: {
+        photos: profileImagesType
+    }
 }
 
 export interface followToUserResponseType {
@@ -126,8 +128,15 @@ export const profileAPI: profileAPI = {
         }).then(response => response.data)
     },
 
-    setPhoto: () => {
-        return instance.get('/profile/photo').then(response => response.data)
+    setPhoto: (file) => {
+        const formData = new FormData();
+        formData.append('image', file);
+        const config = {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        };
+        return instance.put('/profile/photo', formData, config).then(response => response.data)
     },
 
     getProfile: (userId: number) => {
