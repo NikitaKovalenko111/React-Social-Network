@@ -1,70 +1,46 @@
 import styles from './Users.module.sass'
 import cn from 'classnames'
-import { connect } from 'react-redux'
-import { appDispatchType, appStateType } from '../../../redux/store'
+import { appDispatchType } from '../../../redux/store'
 import { UserType } from '../../../types/types'
 import { useEffect, useState } from 'react'
 import { followToUserThunk, getUsersThunk, unfollowToUserThunk } from '../../../redux/reducers/users-reducer'
 import Paginator from './Paginator/Paginator'
 import User from './User/User'
 import Preloader from '../../common/Preloader/Preloader'
+import { compose } from 'redux'
+import { getIsFollowingSelector, getTotalCountSelector, getUsersSelector } from '../../../selectors/users-selectors'
+import { useSelector } from 'react-redux'
+import { getIsLoadingSelector } from '../../../selectors/profile-selectors'
+import { useDispatch } from 'react-redux'
 
 type props = {
-    users: Array<UserType>
-    totalCount: number
-    error?: string
-    count: number
-    page: number
-    isFollowing: Array<number>
-    isLoading: boolean
-
-    setPage: Function
-    followToUser: (userId: number) => void
-    unfollowToUser: (userId: number) => void
-    getUsers: (count?: number, page?: number, term?: string, friend?: boolean) => void
+    
 }
 
-type propsAPI = mstpType & mdtpType
+const Users: React.FC<props> = (): JSX.Element => {
 
-type mstpType = {
-    users: Array<UserType>
-    totalCount: number
-    error: string
-    isFollowing: Array<number>
-    isLoading: boolean
-}
+    const users: Array<UserType> = useSelector(getUsersSelector)
+    const totalCount: number = useSelector(getTotalCountSelector)
+    const isFollowing: Array<number> = useSelector(getIsFollowingSelector)
+    const isLoading: boolean = useSelector(getIsLoadingSelector)
+    const count: number = 18
 
-type mdtpType = {
-    getUsers: (count?: number, page?: number, term?: string, friend?: boolean) => void
-    followToUser: (userId: number) => void
-    unfollowToUser: (userId: number) => void
-}
+    const dispatch: appDispatchType = useDispatch()
+    let [ page, setPage ] = useState(1)
 
-const mstp = (state: appStateType): mstpType => {
-    return {
-        users: state.users.users,
-        totalCount: state.users.totalCount,
-        error: state.users.error,
-        isFollowing: state.users.isFollowing,
-        isLoading: state.profile.isLoading
+    const getUsers = (count?: number, page?: number, term?: string, friend?: boolean) => {
+        dispatch(getUsersThunk(count, page, term, friend))
     }
-}
-
-const mdtp = (dispatch: appDispatchType): mdtpType => {
-    return {
-        getUsers: (count, page, term, friend) => {
-            dispatch(getUsersThunk(count, page, term, friend))
-        },
-        followToUser: (userId: number) => {
-            dispatch(followToUserThunk(userId))
-        },
-        unfollowToUser: (userId: number) => {
-            dispatch(unfollowToUserThunk(userId))
-        },
+    const followToUser = (userId: number) => {
+        dispatch(followToUserThunk(userId))
     }
-}
+    const unfollowToUser = (userId: number) => {
+        dispatch(unfollowToUserThunk(userId))
+    }
 
-const Users: React.FC<props> = ({ isLoading, users, totalCount, count, page, setPage, followToUser, unfollowToUser, getUsers, isFollowing }): JSX.Element => {
+    useEffect(() => {
+        getUsers(count, page)     
+    }, [page])
 
     if (isLoading) {
         return <Preloader />
@@ -84,18 +60,4 @@ const Users: React.FC<props> = ({ isLoading, users, totalCount, count, page, set
     )
 }
 
-const UsersAPI: React.FC<propsAPI> = ({ isLoading, getUsers, users, totalCount, error, followToUser, unfollowToUser, isFollowing }): JSX.Element => {
-
-    const count: number = 18
-    let [ page, setPage ] = useState(1)
-
-    useEffect(() => {
-        getUsers(count, page)     
-    }, [page])
-
-    return (
-        <Users isLoading={ isLoading } isFollowing={ isFollowing } getUsers={ getUsers } unfollowToUser={ unfollowToUser } followToUser={ followToUser } setPage={ setPage } page={ page } count={ count } totalCount={ totalCount } users={ users } />
-    )
-}
-
-export default connect(mstp, mdtp)(UsersAPI)
+export default compose()(Users)

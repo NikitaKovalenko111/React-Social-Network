@@ -1,41 +1,32 @@
-import { connect } from "react-redux"
-import { appDispatchType, appStateType } from "../../../redux/store"
+import { useSelector } from "react-redux"
+import { appDispatchType } from "../../../redux/store"
 import { Formik } from 'formik';
 import cn from 'classnames'
 import styles from './Login.module.sass'
 import { loginThunk } from "../../../redux/reducers/auth-reducer";
 import { compose } from "redux";
 import { Navigate } from "react-router-dom";
+import { getIsAuthorizedSelector } from "../../../selectors/header-selectors";
+import { getUserIdSelector } from "../../../selectors/profile-selectors";
+import { useDispatch } from "react-redux";
 
-type PropsType = mdtpType & mstpType
+type PropsType = {}
 
-type FormPropsType = mdtpType
-
-type mstpType = {
-    isAuthorized: boolean
-    userId: number | null
-}
-
-type mdtpType = {
+type FormPropsType = {
     onLogin: (email: string, password: string, saveMe: boolean) => void
 }
 
-const mstp = (state: appStateType): mstpType => {
-    return {
-        userId: state.auth.userId,
-        isAuthorized: state.auth.isAuthorized
-    }
-}
+const Login: React.FC<PropsType> = (): JSX.Element => {
 
-const mdtp = (dispatch: appDispatchType): mdtpType => {
-    return {
-        onLogin: (email, password, saveMe) => {
-            return dispatch(loginThunk(email, password, saveMe))
-        }
-    }
-}
+    const isAuthorized: boolean = useSelector(getIsAuthorizedSelector)
+    const userId: number | null = useSelector(getUserIdSelector)
 
-const Login: React.FC<PropsType> = ({ onLogin, isAuthorized, userId }): JSX.Element => {
+    const dispatch: appDispatchType = useDispatch()
+
+    const onLogin = (email: string, password: string, saveMe: boolean) => {
+        return dispatch(loginThunk(email, password, saveMe))
+    }
+
     if (isAuthorized) {
         return <Navigate to={`/profile/${userId}`} />
     }
@@ -75,4 +66,4 @@ const LoginForm: React.FC<FormPropsType> = ({ onLogin }): JSX.Element => {
     )
 }
 
-export default compose(connect(mstp, mdtp))(Login) as React.FC
+export default compose()(Login) as React.FC

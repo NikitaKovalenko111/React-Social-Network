@@ -1,9 +1,9 @@
 import cn from 'classnames'
 import styles from './Profile.module.sass'
-import { connect, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import image from './../../../images/profile-image.jpg'
 import { setStatusThunk, setPhotosThunk, getProfileThunk, setOwnerAC, getStatusThunk, setIsLoadingAC } from '../../../redux/reducers/profile-reducer'
-import { appDispatchType, appStateType } from './../../../redux/store'
+import { appDispatchType } from './../../../redux/store'
 import Status from './Status/Status'
 import React, { useEffect } from 'react'
 import { compose } from 'redux'
@@ -99,26 +99,31 @@ const Profile: React.FC<ProfilePropsType> = (): JSX.Element => {
                         setFieldValue,
                     }) => (
                     <form onSubmit={handleSubmit} className={cn(styles.avatarWrapper, {[styles.avatarWrapperIsOwner]: isOwner})}>
-                        { !isOwner &&
-                            <div>
-                                <img className={cn(styles.avatar)} width='400px' src={ isOwner && MyPhoto ? MyPhoto : !isOwner && UserPhoto ? UserPhoto : image } alt="image" />
-                            </div>
-                        }
-                        { isOwner && 
-                            <div className={cn(styles.div)}>
-                                <img className={cn(styles.avatar) } width='400px' src={ isOwner && MyPhoto ? MyPhoto : !isOwner && UserPhoto ? UserPhoto : image } alt="image" />
-                                <div className={cn(styles.parent) }>
-                                    <label htmlFor='fileInput'>
-                                        <input type="file" name='file' onChange={(event) => {
-                                            if (event.target.files) {
-                                                setFieldValue('file', event.target.files[0])
-                                            }
-                                            submitForm()
-                                        }} id='fileInput' accept='image/*' disabled={isSubmitting} />
-                                    </label>
+                        <div className={cn(styles.formContainer)}>
+                            { !isOwner &&
+                                <div>
+                                    <img className={cn(styles.avatar)} width='400px' src={ isOwner && MyPhoto ? MyPhoto : !isOwner && UserPhoto ? UserPhoto : image } alt="image" />
                                 </div>
-                            </div>
-                        }
+                            }
+                            { isOwner && 
+                                <div className={cn(styles.div)}>
+                                    <img className={cn(styles.avatar) } width='400px' src={ isOwner && MyPhoto ? MyPhoto : !isOwner && UserPhoto ? UserPhoto : image } alt="image" />
+                                    <div className={cn(styles.parent) }>
+                                        <label htmlFor='fileInput'>
+                                            <input type="file" name='file' onChange={(event) => {
+                                                if (event.target.files) {
+                                                    setFieldValue('file', event.target.files[0])
+                                                }
+                                                submitForm()
+                                            }} id='fileInput' accept='image/*' disabled={isSubmitting} />
+                                            <div className={cn(styles.after)}>
+
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            }
+                        </div>
                     </form> )}
                 </Formik>
                 <div className={cn(styles.right_side)}>
@@ -140,6 +145,9 @@ const Profile: React.FC<ProfilePropsType> = (): JSX.Element => {
                             }
                         }) }
                     </div>
+                    {
+                        isOwner && <button className={cn(styles.editButton)}>Редактировать</button>
+                    }
                 </div>
             </div>
         </main>

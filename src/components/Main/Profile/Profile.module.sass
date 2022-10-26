@@ -5,49 +5,49 @@
         display: flex
         column-gap: 40px
         .avatarWrapperIsOwner
-            .dn
-                display: none !important
-            .div
-                position: relative
+            .formContainer
                 display: flex
                 justify-content: center
                 align-items: center
-                &:not(::after):hover
-                    filter: blur(5px)
-                .parent
-                    position: absolute
-                    width: 100%
-                    height: 100%          
-                    label
-                        display: flex
-                        justify-content: center
-                        align-items: center
+                &:hover
+                    &::after
+                        display: block
+                        content: ''
+                        width: 50px
+                        height: 50px
+                        position: absolute
+                        background-color: #fff
+                        background-image: url('./../../../images/change-image.svg')
+                        background-repeat: no-repeat
+                        background-position: center
+                        border-radius: 50%  
+                        pointer-events: none
+                .div
+                    position: relative
+                    display: flex
+                    justify-content: center
+                    align-items: center  
+                    &:hover
+                        filter: blur(5px)               
+                    .parent 
+                        position: absolute
                         width: 100%
-                        height: 100%
-                        z-index: 1000
-                        input
-                            display: none
-                        &:hover
-                            cursor: pointer
-                            &::after
-                                display: block
-                                content: ''
-                                width: 50px
-                                height: 50px
-                                position: absolute
-                                background-color: #fff
-                                background-image: url('./../../../images/change-image.svg')
-                                background-repeat: no-repeat
-                                background-position: center
-                                border-radius: 50%
-                    .submitButton
-                        width: 100%
-                        height: 25px   
-                .other_parent 
-                    .saveButton
-                        width: 100%
-                        height: 25px          
+                        height: 100%          
+                        label
+                            display: flex
+                            justify-content: center
+                            align-items: center
+                            width: 100%
+                            height: 100%
+                            z-index: 1000
+                            &:hover
+                                cursor: pointer
+                            input
+                                display: none
         .right_side
+            display: flex
+            flex-direction: column
+            justify-content: space-between
             .fullname
                 font-size: 24px
                 font-family: sans-serif
@@ -79,6 +79,19 @@
                 font-family: sans-serif
                 font-size: 16px
                 color: red
+            .editButton
+                width: 250px
+                font-family: sans-serif
+                text-transform: uppercase
+                padding: 2px 0
+                background: #51c2db
+                outline: none
+                color: white
+                font-weight: bold
+                border: none
+                &:hover
+                    cursor: pointer
+                    background: #2695ad
 
 .preloaderWrapper
     display: flex

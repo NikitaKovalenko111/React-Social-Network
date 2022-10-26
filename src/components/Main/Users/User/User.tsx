@@ -24,8 +24,8 @@ const User: React.FC<props> = ({ el, followToUser, unfollowToUser, count, page, 
             <NavLink to={`/profile/${el.id}`}>{ el.name }</NavLink>
             { el.status ? <p>{ el.status }</p> : <p>Статуса нет</p> }
             { !el.followed ?
-                <button disabled={ isFollowing.some(id => el.id === id) } onClick={() => { followToUser(el.id); getUsers(count, page) } } className={ cn(styles.followButton) }>Подписаться</button> :
-                <button disabled={ isFollowing.some(id => el.id === id) } onClick={() => { unfollowToUser(el.id); getUsers(count, page) } } className={ cn(styles.followButton) }>Отписаться</button>
+                <button disabled={ isFollowing.some(id => el.id === id) } onClick={() => { followToUser(el.id) } } className={ cn(styles.followButton) }>Подписаться</button> :
+                <button disabled={ isFollowing.some(id => el.id === id) } onClick={() => { unfollowToUser(el.id) } } className={ cn(styles.followButton) }>Отписаться</button>
             }
         </div>
     )

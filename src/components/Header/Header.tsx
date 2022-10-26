@@ -3,38 +3,19 @@ import { connect } from 'react-redux';
 import styles from "./Header.module.sass"
 import logo from './../../logo.svg'
 import UserAvatar from '../../images/profile-image.jpg'
-import { appDispatchType, appStateType } from '../../redux/store';
 import { NavLink } from 'react-router-dom'
+import { useSelector } from 'react-redux';
+import { getUserAvatarSelector } from '../../selectors/profile-selectors';
+import { getIsAuthorizedSelector, getLoginSelector } from '../../selectors/header-selectors';
 
-type props = mstpType & mdtpType
+type props = {}
 
-type mstpType = {
-    login: string
-    isAuthorized: boolean
-    userAvatar: string
-}
+const Header: React.FC<props> = (): JSX.Element => {
 
-type mdtpType = {
+    const userAvatar: string = useSelector(getUserAvatarSelector)
+    const login: string = useSelector(getLoginSelector)
+    const isAuthorized: boolean = useSelector(getIsAuthorizedSelector)
 
-}
-
-const mstp = (state: appStateType): mstpType => {
-    return {
-        isAuthorized: state.auth.isAuthorized,
-        login: state.auth.login,
-        userAvatar: state.profile.myProfileImages.small
-    }
-}
-
-const mdtp = (dispatch: appDispatchType): mdtpType => {
-    return {
-
-    }
-}
-
-const Header: React.FC<props> = ({ userAvatar, isAuthorized, login }): JSX.Element => {
-    console.log(userAvatar);
-    
     return (
         <header className={cn(styles.header, 'header')}>
             <div className={cn(styles.header__container, 'container')}>
@@ -54,4 +35,4 @@ const Header: React.FC<props> = ({ userAvatar, isAuthorized, login }): JSX.Eleme
     );
 }
 
-export default connect(mstp, mdtp)(Header)
+export default Header

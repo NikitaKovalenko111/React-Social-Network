@@ -1,38 +1,26 @@
 import cn from 'classnames'
-import { connect } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { NavLink } from 'react-router-dom'
 import styles from './Sidebar.module.sass'
-import { appStateType } from './../../redux/store'
 import { appDispatchType } from './../../redux/store'
 import { exitThunk } from '../../redux/reducers/auth-reducer'
+import { getUserIdSelector } from '../../selectors/profile-selectors'
+import { getIsAuthorizedSelector } from '../../selectors/header-selectors'
+import { useDispatch } from 'react-redux'
 
-type mdtpType = {
-    onExit: () => void
-}
+type props = {}
 
-type mstpType = {
-    userId: number | null
-    isAuthorized: boolean
-}
+const Sidebar: React.FC<props> = (): JSX.Element => {
 
-const mstp = (state: appStateType): mstpType => { 
-    return {
-        userId: state.auth.userId,
-        isAuthorized: state.auth.isAuthorized
+    const userId: number | null = useSelector(getUserIdSelector)
+    const isAuthorized: boolean = useSelector(getIsAuthorizedSelector)
+
+    const dispatch: appDispatchType = useDispatch()
+
+    const onExit = () => {
+        dispatch(exitThunk())
     }
-}
 
-const mdtp = (dispatch: appDispatchType): mdtpType => {
-    return {
-        onExit: () => {
-            dispatch(exitThunk())
-        }
-    }
-}
-
-type props = mstpType & mdtpType
-
-const Sidebar: React.FC<props> = ({ userId, onExit, isAuthorized }): JSX.Element => {
     return (
         <aside className={cn(styles.sidebar, 'sidebar')}>
             <div className={cn(styles.links)}>
@@ -49,4 +37,4 @@ const Sidebar: React.FC<props> = ({ userId, onExit, isAuthorized }): JSX.Element
     )
 }
 
-export default connect(mstp, mdtp)(Sidebar)
+export default Sidebar

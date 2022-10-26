@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { connect } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Route, Routes, Navigate } from 'react-router-dom'
 import './App.sass'
 import Header from './components/Header/Header'
@@ -12,43 +12,27 @@ import { getMeThunk } from './redux/reducers/auth-reducer'
 import { appDispatchType, appStateType } from './redux/store'
 import { compose } from 'redux'
 import Footer from './components/Footer/Footer'
+import { getIsAuthorizedSelector } from './selectors/header-selectors'
+import { getUserIdSelector } from './selectors/profile-selectors'
+import { useDispatch } from 'react-redux'
 
-type props = {
-  isAuthorized: boolean,
-  userId: number | null,
+type props = {}
 
-  getMe: () => void
-}
+const App: React.FC<props> = React.memo(():JSX.Element => {
 
-type mdtpType = {
-  getMe: () => void
-}
+  const isAuthorized: boolean = useSelector(getIsAuthorizedSelector)
+  const userId: number | null = useSelector(getUserIdSelector)
 
-type mstpType = {
-  isAuthorized: boolean
-  userId: number | null
-}
+  const dispatch: appDispatchType = useDispatch()
 
-const mdtp = (dispatch: appDispatchType): mdtpType => {
-  return {
-    getMe: () => {
-      dispatch(getMeThunk())
-    }
+  const getMe = () => {
+    dispatch(getMeThunk())
   }
-}
-
-const mstp = (state: appStateType): mstpType => {
-  return {
-    isAuthorized: state.auth.isAuthorized,
-    userId: state.auth.userId
-  }
-}
-
-const App: React.FC<props> = React.memo(({ getMe, isAuthorized, userId }):JSX.Element => {
   
   useEffect(() => {
     getMe()
   }, [isAuthorized])
+
   return (
     <div className='wrapper'>
       <Header />
@@ -65,4 +49,4 @@ const App: React.FC<props> = React.memo(({ getMe, isAuthorized, userId }):JSX.El
     );
 })
 
-export default compose(connect(mstp, mdtp))(App) as React.FC
+export default compose()(App) as React.FC

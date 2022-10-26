@@ -8,7 +8,8 @@ import { setIsLoadingAC } from './profile-reducer'
 enum ActionCreatorsTypes {
     GET_USERS = "users/GET_USERS",
     SET_FOLLOW_STATUS = "users/SET_FOLLOW_STATUS",
-    SET_IS_FOLLOWING = "users/SET_IS_FOLLOWING"
+    SET_IS_FOLLOWING = "users/SET_IS_FOLLOWING",
+    SET_FOLLOWED_STATUS = "users/SET_FOLLOWED_STATUS"
 }
 
 type getUsersACType = {
@@ -24,10 +25,16 @@ type setIsFollowingACType = {
     id: number
 }
 
-type setFollowStatus = {
+type setFollowStatusACType = {
     type: typeof ActionCreatorsTypes.SET_FOLLOW_STATUS
     userId: number
     status: boolean
+}
+
+type setFollowedStatusACType = {
+    type: typeof ActionCreatorsTypes.SET_FOLLOWED_STATUS
+    status: boolean
+    userId: number
 }
 
 type initialStateType = {
@@ -56,10 +63,16 @@ const usersReducer = (state: initialStateType = InitialState, action: AnyAction)
                 error: action.error,
             }
         }
+        case ActionCreatorsTypes.SET_FOLLOWED_STATUS: {
+            let copyState = state
+            copyState.users = state.users
+            copyState.users.filter(el => el.id === action.userId)[0].followed = action.status
+            return copyState
+        }
         case ActionCreatorsTypes.SET_IS_FOLLOWING: {
             return {
                 ...state,
-                isFollowing: action.isFollowing ? [...state.isFollowing, action.id] : [...state.isFollowing.filter(id => id !== action.id)]
+                isFollowing: action.isFollowing ? [...state.isFollowing, action.id] : [...state.isFollowing.filter(el => el != action.id)]
             }
         }
         default:
@@ -91,8 +104,9 @@ export const followToUserThunk = (userId: number): ThunkType => async dispatch =
     dispatch(setIsFollowingAC(userId, true))
     const response = await usersAPI.followToUser(userId) 
     
-    if (response.status === 200)
+    if (response.status === 200)        
         dispatch(setIsFollowingAC(userId, false))
+        dispatch(setFollowedStatusAC(userId, true))
 }
 
 export const unfollowToUserThunk = (userId: number): ThunkType => async dispatch => {
@@ -101,6 +115,7 @@ export const unfollowToUserThunk = (userId: number): ThunkType => async dispatch
     
     if (response.status === 200)
         dispatch(setIsFollowingAC(userId, false))
+        dispatch(setFollowedStatusAC(userId, false))
 }
 
 ////////// ACTION CREATORS ////////
@@ -114,12 +129,20 @@ export const getUsersAC = (users: Array<UserType>, totalCount: number, error: st
     }
 }
 
+export const setFollowedStatusAC = (userId: number, status: boolean): setFollowedStatusACType => {
+    return {
+        type: ActionCreatorsTypes.SET_FOLLOWED_STATUS,
+        userId: userId,
+        status: status
+    }
+}
+
 export const setIsFollowingAC = (id: number, isFollowing: boolean): setIsFollowingACType => {
     return {
         type: ActionCreatorsTypes.SET_IS_FOLLOWING,
         isFollowing: isFollowing,
         id: id
     }
-} 
+}
 
 export default usersReducer

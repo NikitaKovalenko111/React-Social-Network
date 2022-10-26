@@ -1,4 +1,4 @@
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import { trackType } from '../../../types/types'
 import { appDispatchType, appStateType } from '../../../redux/store'
 import { useEffect } from 'react'
@@ -7,34 +7,23 @@ import MusicElement from './MusicElement/MusicElement'
 import cn from 'classnames'
 import styles from './Music.module.sass'
 import Preloader from '../../common/Preloader/Preloader'
+import { getIsLoadingSelector } from '../../../selectors/profile-selectors'
+import { getTopTracksSelector } from '../../../selectors/music-selectors'
+import { useDispatch } from 'react-redux'
+import { compose } from 'redux'
 
-type PropsType = mstpType & mdtpType
+type PropsType = {}
 
-type mstpType = {
-    tracks: Array<trackType>
-    isLoading: boolean
-}
+const Music: React.FC<PropsType> = (): JSX.Element => {
 
-type mdtpType = {
-    getTopTracks: () => void
-}
+    const isLoading: boolean = useSelector(getIsLoadingSelector)
+    const tracks: Array<trackType> = useSelector(getTopTracksSelector)
 
-const mstp = (state: appStateType): mstpType => {
-    return {
-        tracks: state.music.TopTracks,
-        isLoading: state.profile.isLoading
+    const dispatch: appDispatchType = useDispatch()
+
+    const getTopTracks = () => {
+        dispatch(getTopTracksThunk())
     }
-}
-
-const mdtp = (dispatch: appDispatchType): mdtpType => {
-    return {
-        getTopTracks: () => {
-            dispatch(getTopTracksThunk())
-        },
-    }
-}
-
-const Music: React.FC<PropsType> = ({isLoading, tracks, getTopTracks }): JSX.Element => {
 
     useEffect(() => {
         getTopTracks() 
@@ -55,4 +44,4 @@ const Music: React.FC<PropsType> = ({isLoading, tracks, getTopTracks }): JSX.Ele
     )
 }
 
-export default connect(mstp, mdtp)(Music)
+export default compose()(Music)
