@@ -3,7 +3,7 @@
     padding: 50px
     .infoBlock
         display: flex
-        column-gap: 40px
+        column-gap: 20px
         .avatarWrapperIsOwner
             .formContainer
                 display: flex
@@ -45,54 +45,67 @@
                             input
                                 display: none
         .right_side
-            display: flex
-            flex-direction: column
-            justify-content: space-between
-            .fullname
-                font-size: 24px
-                font-family: sans-serif
-                font-weight: bold
-            .lookingForAJob
-                font-family: sans-serif
-                font-size: 18px
-                .lookingForAJobGreen
-                    color: green
-                .lookingForAJobRed
-                    color: red
-            .lookingForAJobDescription
-                font-family: sans-serif
-                font-size: 18px
-            .aboutMe
-                font-size: 18px
-                font-family: sans-serif
-            .contacts
+            border-left: 1px solid black
+            padding-left: 20px
+            .form_container
                 display: flex
-                align-items: center
-                column-gap: 10px
-                a
-                    cursor: pointer
-                    height: 24px
-                p
+                flex-direction: column
+                justify-content: space-between
+                height: 100%
+                .fullname
+                    font-size: 24px
                     font-family: sans-serif
-                    font-size: 18px
-            .emptyContacts
-                font-family: sans-serif
-                font-size: 16px
-                color: red
-            .editButton
-                width: 250px
-                font-family: sans-serif
-                text-transform: uppercase
-                padding: 2px 0
-                background: #51c2db
-                outline: none
-                color: white
-                font-weight: bold
-                border: none
-                &:hover
-                    cursor: pointer
-                    background: #2695ad
-
+                    font-weight: bold
+                .notForm
+                    display: flex
+                    flex-direction: column
+                    .lookingForAJob
+                        font-family: sans-serif
+                        font-size: 18px
+                        .lookingForAJobGreen
+                            color: green
+                        .lookingForAJobRed
+                            color: red
+                    .lookingForAJobDescription
+                        font-family: sans-serif
+                        font-size: 18px
+                    .aboutMe
+                        font-size: 18px
+                        font-family: sans-serif
+                    .contacts
+                        display: flex
+                        align-items: center
+                        column-gap: 10px
+                        a
+                            cursor: pointer
+                            height: 24px
+                        p
+                            font-family: sans-serif
+                            font-size: 18px
+                    .emptyContacts
+                        font-family: sans-serif
+                        font-size: 16px
+                        color: red
+                    .editButton
+                        width: 250px
+                        font-family: sans-serif
+                        text-transform: uppercase
+                        padding: 2px 0
+                        background: #51c2db
+                        outline: none
+                        color: white
+                        font-weight: bold
+                        border: none
+                        &:hover
+                            cursor: pointer
+                            background: #2695ad
+                .form
+                    .contacts
+                        margin-bottom: 10px
+                        .contacts_container
+                            display: flex
+                            flex-direction: column
+                            gap: 10px
 .preloaderWrapper
     display: flex
     align-items: center

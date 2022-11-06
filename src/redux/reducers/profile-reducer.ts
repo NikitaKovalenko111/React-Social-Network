@@ -2,6 +2,7 @@ import { AnyAction } from "redux"
 import { profileAPI } from "../../api/api"
 import { profileImagesType, ThunkType } from "../../types/types"
 import { contactsTypes } from "../../types/types"
+import { appDispatchType } from "../store"
 
 ///////////// TYPES ////////////////////////
 
@@ -12,6 +13,7 @@ export enum ActionCreatorsTypes {
     SET_ISOWNER = 'profile/SET_ISOWNER',
     SET_MY_PROFILE_IMAGES = 'profile/SET_MY_PROFILE_IMAGES',
     SET_IS_LOADING = 'profile/SET_IS_LOADING',
+    CHANGE_PROFILE = "profile/CHANGE_PROFILE"
 }
 
 export type initialStateType = {
@@ -58,6 +60,15 @@ export interface setIsOwnerACType {
     isOwner: boolean
 }
 
+export interface changeProfileACType {
+    lookingForAJob: boolean
+    aboutMe: string | null
+    lookingForAJobDescription: string | null
+    contacts: contactsTypes
+    //fullName: string
+    type: typeof ActionCreatorsTypes.CHANGE_PROFILE
+}
+
 export interface setMyProfileImagesType {
     type: typeof ActionCreatorsTypes.SET_MY_PROFILE_IMAGES,
     profileImages: profileImagesType
@@ -95,6 +106,15 @@ let initialState: initialStateType = {
 
 const ProfileReducer = (state: initialStateType = initialState , action: AnyAction): initialStateType => {
     switch (action.type) {
+        case ActionCreatorsTypes.CHANGE_PROFILE: {
+            return {
+                ...state,
+                aboutMe: action.aboutMe,
+                lookingForAJob: action.lookingForAJob,
+                lookingForAJobDescription: action.lookingForAJobDescription,
+                contacts: action.contacts
+            }
+        }
         case ActionCreatorsTypes.SET_STATUS: {
             return {
                 ...state,
@@ -179,10 +199,20 @@ export const getProfileAC = (lookingForAJob: boolean, lookingForAJobDescription:
     }
 }
 
-export const setOwnerAC = (value: boolean) => {
+export const setOwnerAC = (value: boolean): setIsOwnerACType => {
     return {
         type: ActionCreatorsTypes.SET_ISOWNER,
         isOwner: value
+    }
+}
+
+export const changeProfileAC = (contacts: contactsTypes, aboutMe: string, lookingForAJob: boolean, lookingForAJobDescription: string | null): changeProfileACType => {
+    return {
+        type: ActionCreatorsTypes.CHANGE_PROFILE,
+        contacts: contacts,
+        aboutMe: aboutMe,
+        lookingForAJob: lookingForAJob,
+        lookingForAJobDescription: lookingForAJobDescription
     }
 }
 
@@ -195,6 +225,20 @@ export const setStatusThunk = (status: string): ThunkType => {
         
         if (response.resultCode === 0) {
             dispatch(setStatusAC(status))
+            dispatch(setIsLoadingAC(false))
+        }
+    }
+}
+
+export const changeProfileThunk = (userId: number | null, fullName: string, aboutMe: string, lookingForAJob: boolean, lookingForAJobDescription: string | null, contacts: contactsTypes): ThunkType => {
+    return async (dispatch) => {      
+        let response = await profileAPI.changeProfile(contacts, fullName, lookingForAJob, lookingForAJobDescription, aboutMe, userId)
+        dispatch(setIsLoadingAC(true))
+        console.log(response);
+        
+
+        if (response.resultCode === 0) {
+            dispatch(changeProfileAC(contacts, aboutMe, lookingForAJob, lookingForAJobDescription))
             dispatch(setIsLoadingAC(false))
         }
     }

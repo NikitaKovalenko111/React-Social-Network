@@ -3,8 +3,9 @@ import styles from './Status.module.sass'
 import { useState } from "react";
 import changeIcon from './../../../../images/changeIcon.svg'
 import saveIcon from './../../../../images/saveIcon.svg'
-import { Formik } from 'formik';
+import { Formik, Field } from 'formik';
 import Preloader from '../../../common/Preloader/Preloader';
+import React from 'react'
 
 type props = {
     status: string
@@ -15,7 +16,7 @@ type props = {
     setIsLoading: (value: boolean) => void
 }
 
-const Status: React.FC<props> = ({setIsLoading, isLoading, status, setStatus, isOwner }): JSX.Element => {
+const Status: React.FC<props> = React.memo(({setIsLoading, isLoading, status, setStatus, isOwner }): JSX.Element => {
 
     let [editMode, setEditMode] = useState(false),
 
@@ -31,7 +32,8 @@ const Status: React.FC<props> = ({setIsLoading, isLoading, status, setStatus, is
     return (
         <div className={cn(styles.wrapper)}>
             <Formik
-            initialValues={{ status: '' }}
+            initialValues={{ status: status }}
+            enableReinitialize={true}
             onSubmit={ async (values, { setSubmitting }) => {
                 setIsLoading(true)
                 let response = await setStatus(values.status)
@@ -52,13 +54,13 @@ const Status: React.FC<props> = ({setIsLoading, isLoading, status, setStatus, is
                     { isOwner && <img onClick={ changeEditMode } className={cn(styles.changeIcon)} src={ changeIcon } alt="change" /> }
                 </div> : 
                 <form className={cn(styles.statusWrapper)} onSubmit={ handleSubmit }>
-                    <input className={cn(styles.statusInput)} type="text" value={ values.status } onChange={ handleChange } name='status' maxLength={50} autoFocus />
+                    <Field className={cn(styles.statusInput)} type="text" onChange={ handleChange } name='status' maxLength={50} autoFocus />
                     <button className={ cn(styles.button) } type='submit' ><img className={cn(styles.saveIcon)} src={ saveIcon } alt="save" /></button>
                 </form> 
             )}
             </Formik>
         </div>
     )
-}
+})
 
 export default Status

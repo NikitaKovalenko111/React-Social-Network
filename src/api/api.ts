@@ -8,6 +8,7 @@ export interface profileAPI {
     setPhoto: (image: any) => Promise<setPhotoResponseType>
     getProfile: (userId: number) => Promise<getProfileResponseType>
     getStatus: (userId: number) => Promise<getStatusResponseType>
+    changeProfile: (contacts: contactsTypes, fullName: string, lookingForAJob: boolean, lookingForAJobDescription: string | null, aboutMe: string, userId: number | null) => Promise<changeProfileResponseType>
 }
 
 export interface usersAPI {
@@ -24,6 +25,10 @@ export interface authAPI {
 }
 
 export interface setStatusResponseType extends defaultResponseType {
+    readonly data: {}
+}
+
+export interface changeProfileResponseType extends defaultResponseType {
     readonly data: {}
 }
 
@@ -127,7 +132,16 @@ export const profileAPI: profileAPI = {
             status: status
         }).then(response => response.data)
     },
-
+    changeProfile(contacts: contactsTypes, fullName: string, lookingForAJob: boolean, lookingForAJobDescription: string | null, aboutMe: string, userId: number | null) {
+        return instance.put('/profile', {
+            userId: userId,
+            AboutMe: aboutMe,
+            contacts: contacts,
+            lookingForAJob: lookingForAJob,
+            lookingForAJobDescription: lookingForAJobDescription,
+            fullName: fullName
+        }).then(response => response.data)
+    },
     setPhoto: (file) => {
         const formData = new FormData();
         formData.append('image', file);
