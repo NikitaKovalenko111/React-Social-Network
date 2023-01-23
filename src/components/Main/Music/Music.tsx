@@ -1,4 +1,4 @@
-import { connect, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { trackType } from '../../../types/types'
 import { appDispatchType, appStateType } from '../../../redux/store'
 import { useEffect } from 'react'

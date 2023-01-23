@@ -8,19 +8,17 @@ import Status from './Status/Status'
 import React, { useEffect, useState } from 'react'
 import { compose } from 'redux'
 import { useParams } from 'react-router-dom'
-import github from '../../../images/github.svg'
-import youtube from '../../../images/youtube.svg'
 import vk from '../../../images/vk.svg'
-import twitter from '../../../images/twitter.svg'
-import internet from '../../../images/internet.svg'
-import instagram from '../../../images/instagram.svg'
-import facebook from '../../../images/facebook.svg'
 import { contactsTypes } from '../../../types/types'
 import Redirect from "../../../hoc/Redirect"
 import Preloader from '../../common/Preloader/Preloader'
 import { Formik, Field } from 'formik';
 import { getAboutMeSelector, getContactsSelector, getFullNameSelector, getIsLoadingSelector, getIsOwnerSelector, getLookingForAJobSelector, getLookingForAJobDescriptionSelector, getMyPhotoSelector, getStatusSelector, getUserPhotoSelector, getUserIdSelector } from '../../../selectors/profile-selectors'
 import { useDispatch } from 'react-redux'
+import { Form, Input, Button, Select, Space } from 'antd'
+import { FacebookOutlined, GithubOutlined, YoutubeOutlined, TwitterOutlined, InstagramOutlined, ChromeOutlined } from '@ant-design/icons'
+
+const { Option } = Select;
 
 type UriParams = {
     userId?: number
@@ -29,6 +27,33 @@ type UriParams = {
 type ProfilePropsType = {}
 
 const Profile: React.FC<ProfilePropsType> = React.memo((): JSX.Element => {
+
+    let [selectBeforeValue, setSelectBeforeValue] = useState('http://')
+    let [selectAfterValue, setSelectAfterValue] = useState('.com')
+
+    const selectBeforeChange = (el: string) => {
+        setSelectBeforeValue(el)  
+    }
+
+    const selectAfterChange = (el: string) => {
+        setSelectAfterValue(el)  
+    }
+
+    const selectBefore = (
+        <Select onChange={selectBeforeChange} defaultValue={ selectBeforeValue } className='select-before'>
+          <Option value="http://">http://</Option>
+          <Option value="https://">https://</Option>
+        </Select> 
+    )
+    
+    const selectAfter = (
+        <Select onChange={selectAfterChange} defaultValue={ selectAfterValue } className="select-after">
+          <Option value=".com">.com</Option>
+          <Option value=".jp">.jp</Option>
+          <Option value=".cn">.cn</Option>
+          <Option value=".org">.org</Option>
+        </Select>
+    )
     
     const isLoading: boolean = useSelector(getIsLoadingSelector)
     const isOwner: boolean = useSelector(getIsOwnerSelector)
@@ -83,8 +108,9 @@ const Profile: React.FC<ProfilePropsType> = React.memo((): JSX.Element => {
         return <Preloader />
     }
 
+    const returnValue = (web: string) => !!web && !(web == '' ||  web == null) && web.substring(0,8) !== 'https://' ? 'https://' + web : !!web && (web != '' &&  web != null) ? web : ''
+
     return (
-        <main className={cn(styles.main, 'main')}>
             <div className={cn(styles.infoBlock)}>
                 <Formik initialValues={{ file: null }}
                     onSubmit={ async (values, { setSubmitting }) => {       
@@ -100,7 +126,7 @@ const Profile: React.FC<ProfilePropsType> = React.memo((): JSX.Element => {
                         submitForm, 
                         setFieldValue,
                     }) => (
-                    <form onSubmit={handleSubmit} className={cn(styles.avatarWrapper, {[styles.avatarWrapperIsOwner]: isOwner})}>
+                    <Form onFinish={handleSubmit} className={cn(styles.avatarWrapper, {[styles.avatarWrapperIsOwner]: isOwner})}>
                         <div className={cn(styles.formContainer)}>
                             { !isOwner &&
                                 <div>
@@ -112,63 +138,68 @@ const Profile: React.FC<ProfilePropsType> = React.memo((): JSX.Element => {
                                     <img className={cn(styles.avatar) } width='400px' src={ isOwner && MyPhoto ? MyPhoto : !isOwner && UserPhoto ? UserPhoto : image } alt="image" />
                                     <div className={cn(styles.parent) }>
                                         <label htmlFor='fileInput'>
-                                            <input type="file" name='file' onChange={(event) => {
-                                                if (event.target.files) {
-                                                    setFieldValue('file', event.target.files[0])
-                                                }
-                                                submitForm()
-                                            }} id='fileInput' accept='image/*' disabled={isSubmitting} />
-                                            <div className={cn(styles.after)}>
+                                            <Form.Item>
+                                                <Input type="file" name='file' onChange={(event) => {
+                                                    if (event.target.files) {
+                                                        setFieldValue('file', event.target.files[0])
+                                                    }
+                                                    submitForm()
+                                                }} id='fileInput' accept='image/*' disabled={isSubmitting} />
+                                                <div className={cn(styles.after)}>
 
-                                            </div>
+                                                </div>
+                                            </Form.Item>
                                         </label>
                                     </div>
                                 </div>
                             }
                         </div>
-                    </form> )}
+                    </Form> )}
                 </Formik>
                 <div className={cn(styles.right_side)}>
                     <div className={cn(styles.form_container)}>
-                        <p className={cn(styles.fullname)}>{ fullName }</p>
+                        <div className={cn(styles.fullname)}>{ fullName }</div>
                         <Status setIsLoading={setIsLoading} isLoading={isLoading} isOwner={isOwner} setStatus={setStatus} status={status} />
                         {
                             !ProfileDataForm ?
                             <div className={cn(styles.notForm)}>
-                                <p className={cn(styles.lookingForAJob)}>Ищет работу: <span className={cn(lookingForAJob ? styles.lookingForAJobGreen : styles.lookingForAJobRed)}>{ lookingForAJob ? 'Да' : 'Нет' }</span></p>
-                                { lookingForAJob && <p className={cn(styles.lookingForAJobDescription)}>Мои навыки: { lookingForAJobDescription }</p> }
-                                { aboutMe && <p className={cn(styles.aboutMe)}>Обо мне: { aboutMe }</p> }
-                                <div className={cn(styles.contacts)}>
-                                    <p>Контакты:</p>
-                                    { Object.keys(contacts).map(el => {                      
-                                        if (contacts[el] !== null) {
-                                            return <a key={el} href={contacts[el]}><img width='30px' height='30px' src={el === 'github' ? github : el === 'facebook' ? facebook : el === 'youtube' ? youtube : el === 'vk' ? vk : el === 'twitter' ? twitter : el === 'instagram' ? instagram : internet } alt={el} /></a>
-                                        }
-                                        else {
-                                            counter++
-                                            if(counter === Object.keys(contacts).length)
-                                                return <span className={cn(styles.emptyContacts)}>Нет</span>
-                                        }
-                                    }) }
-                                </div>
-                                {
-                                    isOwner && !ProfileDataForm && <button onClick={ () => setProfileDataForm(true) } className={cn(styles.editButton)}>Редактировать</button>
-                                }
+                                <Space direction='vertical'>
+                                    <p className={cn(styles.lookingForAJob)}>Ищет работу: <span className={cn(lookingForAJob ? styles.lookingForAJobGreen : styles.lookingForAJobRed)}>{ lookingForAJob ? 'Да' : 'Нет' }</span></p>
+                                    { lookingForAJob && <p className={cn(styles.lookingForAJobDescription)}>Мои навыки: { lookingForAJobDescription }</p> }
+                                    { aboutMe && <p className={cn(styles.aboutMe)}>Обо мне: { aboutMe }</p> }
+                                    <div className={cn(styles.contacts)} style={{ fontSize: 18, fontFamily: 'sans-serif', padding: '0 0 10px 0' }}>
+                                        Контакты:
+                                        { Object.keys(contacts).map(el => {                      
+                                            if (contacts[el] !== null && contacts[el] != '') {
+                                                return <a key={el} href={contacts[el]}>{el === 'github' ? <GithubOutlined width={40} style={{ color: 'black', fontSize: 30 }} /> : el === 'facebook' ? <FacebookOutlined width={40} style={{ color: 'black', fontSize: 30 }} /> : el === 'youtube' ? <YoutubeOutlined width={40} style={{ color: 'black', fontSize: 30 }} /> : el === 'vk' ? <img src={ vk } alt="vk" height="30px" /> : el === 'twitter' ? <TwitterOutlined width={40} style={{ color: 'black', fontSize: 30 }} /> : el === 'instagram' ? <InstagramOutlined width={40} style={{ color: 'black', fontSize: 30 }} /> : <ChromeOutlined width={40} style={{ color: 'black', fontSize: 30 }} /> }</a>
+                                            }
+                                            else {
+                                                counter++
+                                                if(counter === Object.keys(contacts).length)
+                                                    return <span className={cn(styles.emptyContacts)}>Нет</span>
+                                            }
+                                        }) }
+                                    </div>
+                                    {
+                                        isOwner && !ProfileDataForm && <button onClick={ () => setProfileDataForm(true) } className={cn(styles.editButton)}>Редактировать</button>
+                                    }
+                                </Space>
                             </div> :
-                            <Formik initialValues={{ lookingForAJob: lookingForAJob ? '1' : '0', fullName: fullName, lookingForAJobDescription: lookingForAJobDescription == '' ? null : lookingForAJobDescription, aboutMe: aboutMe, mainLink: contacts.mainLink, website: contacts.website, facebook: contacts.facebook, github: contacts.website, vk: contacts.vk, instagram: contacts.instagram, youtube: contacts.youtube, twitter: contacts.twitter }}
+                            <Formik initialValues={{ lookingForAJob: lookingForAJob ? '1' : '0', fullName: fullName, lookingForAJobDescription: lookingForAJobDescription == '' ? null : lookingForAJobDescription, aboutMe: aboutMe, mainLink: /*!!contacts.mainLink ? */contacts.mainLink/*.substring(selectBeforeValue.length, contacts.mainLink.length - selectAfterValue.length) : null*/, website: contacts.website, facebook: contacts.facebook, github: contacts.github, vk: contacts.vk, instagram: contacts.instagram, youtube: contacts.youtube, twitter: contacts.twitter }}
                             enableReinitialize={true}
-                            onSubmit={ async (values, { setSubmitting }) => {
+                            onSubmit={ async (values, { setSubmitting }) => {                                                 
                                 let contacts: contactsTypes = {
-                                    facebook: values.facebook,
-                                    instagram: values.instagram,
-                                    vk: values.vk,
-                                    youtube: values.youtube,
-                                    twitter: values.twitter,
-                                    mainLink: values.mainLink,
-                                    github: values.github,
-                                    website: values.website
+                                    facebook: returnValue(values.facebook),
+                                    instagram: returnValue(values.instagram),
+                                    vk: returnValue(values.vk),
+                                    youtube: returnValue(values.youtube),
+                                    twitter: returnValue(values.twitter),
+                                    mainLink:  returnValue(values.mainLink),
+                                    github: returnValue(values.github),
+                                    website: returnValue(values.website)
                                 }                          
                                 let response = await changeProfile(userId, values.fullName, values.aboutMe as string, Boolean(Number(values.lookingForAJob)), values.lookingForAJobDescription, contacts)
+                                
                                 setProfileDataForm(false)          
                                 setSubmitting(false)
                             }}
@@ -178,35 +209,37 @@ const Profile: React.FC<ProfilePropsType> = React.memo((): JSX.Element => {
                                 handleSubmit,
                                 isSubmitting,
                                 handleChange,
+                                setFieldValue
                             }) => (
-                            <form onSubmit={handleSubmit} className={cn(styles.form)}>
-                                <p className={cn(styles.lookingForAJob)}>Ищу работу: <Field as="select" name="lookingForAJob">
-                                    <option value="1">Да</option>
-                                    <option value="0">Нет</option>
-                                </Field></p>
-                                { values.lookingForAJob === '1' && <p className={cn(styles.lookingForAJobDescription)}>Мои навыки: <Field type="text" name="lookingForAJobDescription" placeholder="Ваши навыки" /></p> }
-                                <p className={cn(styles.aboutMe)}>Обо мне: <Field type="text" name="aboutMe" placeholder="Информация о вас" /></p>
-                                <div className={cn(styles.contacts)}>
-                                    <p>Контакты:</p>
-                                    <div className={cn(styles.contacts_container)}>
-                                        <Field type="text" name="facebook" placeholder="Ссылка на ваш facebook" />
-                                        <Field type="text" name="youtube" placeholder="Ссылка на ваш youtube" />
-                                        <Field type="text" name="twitter" placeholder="Ссылка на ваш twitter" />
-                                        <Field type="text" name="instagram" placeholder="Ссылка на ваш instagram" />
-                                        <Field type="text" name="vk" placeholder="Ссылка на ваш ВК" />
-                                        <Field type="text" name="github" placeholder="Ссылка на ваш github" />
-                                        <Field type="text" name="mainLink" placeholder="Ссылка на Ваш сайт" />
-                                        <Field type="text" name="website" placeholder="Ссылка на сайт" />
+                            <Form onFinish={handleSubmit} className={cn(styles.form)}>
+                                <Space direction='vertical' size={10}>
+                                    <div style={{ fontFamily: 'sans-serif', fontSize: 16 }} className={cn(styles.lookingForAJob)}>Ищу работу: <Select defaultValue={ values.lookingForAJob } onSelect={ handleChange } onChange={(value) => { setFieldValue('lookingForAJob', value) }}>
+                                        <Option value="0">Нет</Option>
+                                        <Option value="1">Да</Option>
+                                    </Select></div>
+                                    { values.lookingForAJob === '1' && <div style={{ fontFamily: 'sans-serif', fontSize: 16 }} className={cn(styles.lookingForAJobDescription)}>Мои навыки: <Input name={"lookingForAJobDescription"} defaultValue={ values.lookingForAJobDescription as string } placeholder="Ваши навыки" /></div> }
+                                    <div style={{ fontFamily: 'sans-serif', fontSize: 16 }} className={cn(styles.aboutMe)}>Обо мне: <Input.TextArea onChange={ handleChange } value={values.aboutMe as string} name={'aboutMe'} placeholder='Информация о Вас' /></div>
+                                    <div style={{ fontFamily: 'sans-serif', fontSize: 16 }} className={cn(styles.contacts)}>
+                                        <p>Контакты:</p>
+                                        <div className={cn(styles.contacts_container)}>
+                                            <Input onChange={ handleChange } addonBefore='https://' addonAfter={<FacebookOutlined />} name="facebook" defaultValue={!!values.facebook ? values.facebook.substring(8) : ''} placeholder="Ссылка на ваш facebook" />
+                                            <Input onChange={ handleChange } addonBefore='https://' addonAfter={<YoutubeOutlined />} name="youtube" defaultValue={!!values.youtube ? values.youtube.substring(8) : ''} placeholder="Ссылка на ваш youtube" />
+                                            <Input onChange={ handleChange } addonBefore='https://' addonAfter={<TwitterOutlined />} name="twitter" defaultValue={!!values.twitter ? values.twitter.substring(8) : ''} placeholder="Ссылка на ваш twitter" />
+                                            <Input onChange={ handleChange } addonBefore='https://' addonAfter={<InstagramOutlined />} name="instagram" defaultValue={!!values.instagram ? values.instagram.substring(8) : ''} placeholder="Ссылка на ваш instagram" />
+                                            <Input onChange={ handleChange } addonBefore='https://' name="vk" defaultValue={!!values.vk ? values.vk.substring(8) : ''} placeholder="Ссылка на ваш ВК" />
+                                            <Input onChange={ handleChange } addonBefore='https://' addonAfter={<GithubOutlined />} name="github" defaultValue={!!values.github ? values.github.substring(8) : ''} placeholder="Ссылка на ваш github" />
+                                            <Input onChange={ handleChange } addonBefore={selectBefore} addonAfter={selectAfter} name="mainLink" defaultValue={values.mainLink as string} placeholder="Ссылка на Ваш сайт" />
+                                            <Input onChange={ handleChange } addonBefore={selectBefore} addonAfter={selectAfter} name="website" defaultValue={!!values.website ? values.website.substring(8) : ''} placeholder="Ссылка на сайт" />
+                                        </div>
                                     </div>
-                                </div>
-                                <button disabled={isSubmitting} type='submit'>Сохранить</button>
-                            </form> )}
+                                    <button className={cn(styles.editButton)} disabled={isSubmitting} type='submit'>Сохранить</button>
+                                </Space>
+                            </Form> )}
                             </Formik>
                         }
                     </div>
                 </div>
             </div>
-        </main>
     )
 })
 

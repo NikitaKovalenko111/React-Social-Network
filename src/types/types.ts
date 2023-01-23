@@ -15,7 +15,7 @@ export type trackType = {
     url: string
 }
 
-export type ThunkType = ThunkAction<Promise<void>, appStateType, unknown, AnyAction>
+export type ThunkType = ThunkAction<Promise<void> | void, appStateType, undefined, AnyAction>
 
 export type contactsTypes = {
     [github: string]: string
@@ -39,4 +39,11 @@ export type UserType = {
     status: string
     photos: profileImagesType
     followed: boolean
+}
+
+export type ChatMessageType = {
+    message: string
+    photo: string
+    userId: number
+    userName: string
 }

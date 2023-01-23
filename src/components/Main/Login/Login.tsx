@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux"
 import { appDispatchType } from "../../../redux/store"
-import { Formik, Field } from 'formik';
+import { Formik } from 'formik';
 import cn from 'classnames'
 import styles from './Login.module.sass'
 import { loginThunk } from "../../../redux/reducers/auth-reducer";
@@ -9,9 +9,9 @@ import { Navigate } from "react-router-dom";
 import { getIsAuthorizedSelector } from "../../../selectors/header-selectors";
 import { getUserIdSelector } from "../../../selectors/profile-selectors";
 import { useDispatch } from "react-redux";
-import closedEyeImg from '../../../images/closed-eye.png'
-import openedEyeImg from '../../../images/opened-eye.png'
 import { useState } from "react";
+import { Form, Input, Button, Checkbox, PageHeader } from 'antd'
+import { MailOutlined, LockOutlined  } from '@ant-design/icons'
 
 type PropsType = {}
 
@@ -35,7 +35,7 @@ const Login: React.FC<PropsType> = (): JSX.Element => {
     }
     return (
         <div className={ cn(styles.wrapper) }>
-            <h1>Авторизация</h1>
+            <PageHeader style={{ fontSize: 25, textTransform: 'uppercase' }} >Авторизация</PageHeader>
             <LoginForm onLogin={ onLogin }/>
         </div>
     )
@@ -58,20 +58,17 @@ const LoginForm: React.FC<FormPropsType> = ({ onLogin }): JSX.Element => {
          values,
          handleSubmit,
          isSubmitting,
-         handleChange
+         handleChange,
+         submitForm
        }) => (
-         <form onSubmit={handleSubmit} className={ cn(styles.formWrapper) } >
-           <Field className={ cn(styles.input) } type="email" name="email" onChange={ handleChange } placeholder="Email" />
+         <Form onFinish={ handleSubmit } className={ cn(styles.formWrapper) } >
+           <Input size="large" style={{ fontSize: 18, width: 500 }} prefix={<MailOutlined style={{ fontSize: 18 }} />} type="email" name="email" onChange={ handleChange } placeholder="Email" />
            <div className={cn(styles.passwordWrapper)}>
-            <Field className={ cn(styles.input) } maxLength='32' type={ isOpened ? 'password' : 'text' } name="password" onChange={ handleChange } placeholder="Пароль" />
-            <div className={cn(styles.eyesWrapper)}>
-              { !isOpened && <img src={ closedEyeImg } alt="opened-eye" className={cn(styles.eye)} onClick={() => { SetIsOpened(true) }} /> }
-              { isOpened && <img src={ openedEyeImg } alt="closed-eye" className={cn(styles.eye)} onClick={() => { SetIsOpened(false) }} /> }
-            </div>
+              <Input.Password style={{ fontSize: 18, width: 500 }} prefix={ <LockOutlined style={{ fontSize: 18 }} /> } placeholder="Password" maxLength={32} size="large" onChange={ handleChange } name="password" />
            </div>
-           <label>Запомнить меня<Field type="checkbox" name="saveMe" onChange={ handleChange } /></label>
-           <button type="submit" disabled={ isSubmitting }>Войти</button>
-         </form>
+           <Checkbox style={{ fontSize: 20, width: 500, height: 50, display: 'flex', alignItems: 'center' }} name="saveMe" onChange={ handleChange }>Запомнить меня</Checkbox>
+           <Button style={{ height: 40, textTransform: 'uppercase', fontSize: 18 }} onClick={ submitForm } disabled={ isSubmitting }>Войти</Button>
+         </Form>
        )}
      </Formik>
     )

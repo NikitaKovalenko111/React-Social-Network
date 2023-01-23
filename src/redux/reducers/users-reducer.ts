@@ -1,5 +1,5 @@
 import { AnyAction } from "redux"
-import { usersAPI } from "../../api/api"
+import { usersAPI } from "../../api/UsersApi"
 import { ThunkType, UserType } from "../../types/types"
 import { setIsLoadingAC } from './profile-reducer'
 

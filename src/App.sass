@@ -1,26 +1,11 @@
 .container
+    max-width: 1700px
     margin: 0 auto
-    width: 1570px
 
-.wrapper
-    display: grid
-    grid-template-areas: 'header header header' 'sidebar main main' 'footer footer footer'
-    grid-template-columns: 240px 1fr
-    grid-template-rows: 90px 1fr 90px
-    position: relative
-    min-height: 100vh
-    height: 100%
+.ant-checkbox .ant-checkbox-inner
+    width: 30px
+    height: 30px
 
-.header
-    grid-area: header
-
-.sidebar
-    grid-area: sidebar
-    min-height: calc(80vh - 90px)
-
-.main
-    grid-area: main
-    min-height: calc(80vh - 90px)
-
-.footer
-    grid-area: footer
+.ant-checkbox-inner::after
+    width: 10px !important
+    height: 17px !important

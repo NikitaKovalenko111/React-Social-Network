@@ -1,18 +1,16 @@
 import cn from 'classnames'
 import styles from './Footer.module.sass'
+import { Layout } from 'antd'
+const { Footer } = Layout
 
 type PropsType = {
 
 }
 
-const Footer: React.FC<PropsType> = ({}): JSX.Element => {
+const FooterComponent: React.FC<PropsType> = ({}): JSX.Element => {
     return (
-        <div className={cn(styles.footer, 'footer')}>
-            <div className={cn('container')}>
-                <p>Footer</p>
-            </div>
-        </div>
+        <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
     )
 }
 
-export default Footer
+export default FooterComponent

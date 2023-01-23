@@ -7,16 +7,13 @@ import { useEffect } from "react"
 
 type props = {
     el: UserType
-    count: number
-    page: number
     isFollowing: Array<number>
 
     followToUser: (userId: number) => void
     unfollowToUser: (userId: number) => void
-    getUsers: (count?: number, page?: number, term?: string, friend?: boolean) => void
 }
 
-const User: React.FC<props> = ({ el, followToUser, unfollowToUser, count, page, getUsers, isFollowing }): JSX.Element => {
+const User: React.FC<props> = ({ el, followToUser, unfollowToUser, isFollowing }): JSX.Element => {
 
     return (
         <div key={ el.id } className={ cn(styles.userBlock) }>

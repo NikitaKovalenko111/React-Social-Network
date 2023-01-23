@@ -1,38 +1,37 @@
 import cn from 'classnames';
-import { connect } from 'react-redux';
 import styles from "./Header.module.sass"
-import logo from './../../logo.svg'
-import UserAvatar from '../../images/profile-image.jpg'
 import { NavLink } from 'react-router-dom'
 import { useSelector } from 'react-redux';
 import { getUserAvatarSelector } from '../../selectors/profile-selectors';
 import { getIsAuthorizedSelector, getLoginSelector } from '../../selectors/header-selectors';
+import { UserOutlined } from '@ant-design/icons';
+import { Avatar, Row, Col } from 'antd';
+
+import { Layout } from 'antd'
+const { Header } = Layout
 
 type props = {}
 
-const Header: React.FC<props> = (): JSX.Element => {
+const HeaderComponent: React.FC<props> = (): JSX.Element => {
 
     const userAvatar: string = useSelector(getUserAvatarSelector)
     const login: string = useSelector(getLoginSelector)
     const isAuthorized: boolean = useSelector(getIsAuthorizedSelector)
 
     return (
-        <header className={cn(styles.header, 'header')}>
-            <div className={cn(styles.header__container, 'container')}>
-                <div className={cn(styles.logo)}>
-                    <a href="/"><img src={ logo } alt="logo" /></a>
-                </div>
+        <Header className="site-layout-background" style={{ height: 'auto' }} >
+            <div className="container" style={{ padding: "10px 0" }}>
                 { isAuthorized ? 
-                <div className={cn(styles.profile)}>
-                    <p>{ login }</p>
-                    <img width='75px' src={ userAvatar ? userAvatar : UserAvatar } alt="avatar" />
-                </div> 
-                : <div className={cn(styles.profile)}>
-                    <NavLink to="login">Войти</NavLink>
-                </div> }
+                <Row justify={'end'} align={'middle'} gutter={10}>
+                    <Col style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>{ login }</Col>
+                    <Col><Avatar size={64} icon={ userAvatar ? <img src={ userAvatar } /> : <UserOutlined />} /></Col>
+                </Row> 
+                : <Row justify={'end'} align={'middle'}>
+                    <Col><NavLink style={{ color: 'white', textTransform: 'uppercase' }} to="login">Войти</NavLink></Col>
+                </Row> }
             </div>
-        </header>
+        </Header>
     );
 }
 
-export default Header
+export default HeaderComponent

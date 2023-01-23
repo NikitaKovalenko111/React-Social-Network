@@ -1,5 +1,5 @@
 import { AnyAction } from "redux"
-import { AuthAPI } from "../../api/api"
+import { AuthAPI } from "../../api/AuthApi"
 import { ThunkAction } from "redux-thunk"
 import { appDispatchType, appStateType } from "../store"
 import { ThunkType } from "../../types/types"

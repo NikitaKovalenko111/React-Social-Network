@@ -1,14 +1,16 @@
 .usersWrapper
     padding: 25px
-    display: flex
-    flex: 1 0
-    column-gap: 50px
-    flex-wrap: wrap
+    display: grid
+    grid-template-columns: 20% 20% 20% 20% 20%
     justify-content: center
+    justify-items: center
     .userBlock
-        width: 200px
         margin-bottom: 75px
+        width: 200px
         display: flex
+        border: 1px solid black
+        border-radius: 5%
+        padding: 20px
         flex-direction: column
         justify-content: center
         img
@@ -21,11 +23,13 @@
             font-family: sans-serif
             font-size: 18px
             color: black
+            text-align: center
             &:hover
                 text-decoration: underline
         p
             align-self: center
             font-size: 15px
+            text-align: center
             font-weight: bold
             font-family: sans-serif
         button

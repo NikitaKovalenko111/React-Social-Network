@@ -1,5 +1,5 @@
 import { AnyAction } from 'redux'
-import { MusicAPI } from '../../api/api'
+import { MusicAPI } from '../../api/MusicApi'
 import { trackType, ThunkType } from '../../types/types'
 import { setIsLoadingAC } from './profile-reducer'
 

@@ -1,5 +1,5 @@
 import { AnyAction } from "redux"
-import { profileAPI } from "../../api/api"
+import { profileAPI } from "../../api/ProfileApi"
 import { profileImagesType, ThunkType } from "../../types/types"
 import { contactsTypes } from "../../types/types"
 import { appDispatchType } from "../store"
