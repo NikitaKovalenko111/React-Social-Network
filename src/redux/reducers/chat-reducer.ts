@@ -29,8 +29,6 @@ let initialState: initialStateType = {
 const chatReducer = (state: initialStateType = initialState, action: AnyAction): initialStateType => {
     switch (action.type) {
         case ActionCreatorsTypes.SET_MESSAGES: {
-            console.log(11);
-            console.log(...action.messages);
             return {
                 ...state, 
                 messages: [...state.messages, ...action.messages]
