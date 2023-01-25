@@ -3,6 +3,7 @@ import { ChatMessageType, ThunkType } from "../../types/types"
 import { appDispatchType } from "../store"
 import { ChatAPI } from "../../api/ChatApi"
 import React, { Dispatch, Ref, RefObject } from "react"
+import { message } from "antd"
 
 // TYPES
 
@@ -28,9 +29,11 @@ let initialState: initialStateType = {
 const chatReducer = (state: initialStateType = initialState, action: AnyAction): initialStateType => {
     switch (action.type) {
         case ActionCreatorsTypes.SET_MESSAGES: {
+            console.log(11);
+            console.log(...action.messages);
             return {
                 ...state, 
-                messages: [...action.messages]
+                messages: [...state.messages, ...action.messages]
             }
         }
 

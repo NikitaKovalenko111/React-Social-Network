@@ -20,6 +20,7 @@
     "@types/redux-thunk": "^2.1.0",
     "antd": "^4.24.1",
     "axios": "^0.27.2",
+    "bad-words": "^3.0.4",
     "classnames": "^2.3.1",
     "croppie": "^2.6.5",
     "formik": "^2.2.9",
@@ -59,5 +60,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/bad-words": "^3.0.1"
   }
 }

@@ -25,15 +25,12 @@ const closeHandler = (e: CloseEvent) => {
     setTimeout(ChatAPI.start, 3000)
 }
 
-const createChannel = async () => {
+const createChannel = () => {
     ws?.removeEventListener('close', closeHandler)
     ws?.close()
-    ws = await new WebSocket('wss://social-network.samuraijs.com/handlers/ChatHandler.ashx')
-    
-    if (ws.readyState === 0) {
-        ws.addEventListener('close', closeHandler)
-        ws.addEventListener('message', messageHandler)
-    }
+    ws = new WebSocket('wss://social-network.samuraijs.com/handlers/ChatHandler.ashx')
+    ws.addEventListener('close', closeHandler)
+    ws.addEventListener('message', messageHandler)
 }
 
 let subscribers = [] as SubscribersType[]
