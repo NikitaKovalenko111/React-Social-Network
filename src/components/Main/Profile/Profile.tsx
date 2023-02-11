@@ -15,8 +15,9 @@ import Preloader from '../../common/Preloader/Preloader'
 import { Formik, Field } from 'formik';
 import { getAboutMeSelector, getContactsSelector, getFullNameSelector, getIsLoadingSelector, getIsOwnerSelector, getLookingForAJobSelector, getLookingForAJobDescriptionSelector, getMyPhotoSelector, getStatusSelector, getUserPhotoSelector, getUserIdSelector } from '../../../selectors/profile-selectors'
 import { useDispatch } from 'react-redux'
-import { Form, Input, Button, Select, Space } from 'antd'
+import { Form, Input, Button, Select, Space, Alert } from 'antd'
 import { FacebookOutlined, GithubOutlined, YoutubeOutlined, TwitterOutlined, InstagramOutlined, ChromeOutlined } from '@ant-design/icons'
+import { validateProfileForm } from '../../../validates/ProfileFormValidate'
 
 const { Option } = Select;
 
@@ -27,34 +28,6 @@ type UriParams = {
 type ProfilePropsType = {}
 
 const Profile: React.FC<ProfilePropsType> = React.memo((): JSX.Element => {
-
-    let [selectBeforeValue, setSelectBeforeValue] = useState('http://')
-    let [selectAfterValue, setSelectAfterValue] = useState('.com')
-
-    const selectBeforeChange = (el: string) => {
-        setSelectBeforeValue(el)  
-    }
-
-    const selectAfterChange = (el: string) => {
-        setSelectAfterValue(el)  
-    }
-
-    const selectBefore = (
-        <Select onChange={selectBeforeChange} defaultValue={ selectBeforeValue } className='select-before'>
-          <Option value="http://">http://</Option>
-          <Option value="https://">https://</Option>
-        </Select> 
-    )
-    
-    const selectAfter = (
-        <Select onChange={selectAfterChange} defaultValue={ selectAfterValue } className="select-after">
-          <Option value=".com">.com</Option>
-          <Option value=".jp">.jp</Option>
-          <Option value=".cn">.cn</Option>
-          <Option value=".org">.org</Option>
-        </Select>
-    )
-    
     const isLoading: boolean = useSelector(getIsLoadingSelector)
     const isOwner: boolean = useSelector(getIsOwnerSelector)
     const status: string = useSelector(getStatusSelector)
@@ -108,7 +81,7 @@ const Profile: React.FC<ProfilePropsType> = React.memo((): JSX.Element => {
         return <Preloader />
     }
 
-    const returnValue = (web: string) => !!web && !(web == '' ||  web == null) && web.substring(0,8) !== 'https://' ? 'https://' + web : !!web && (web != '' &&  web != null) ? web : ''
+    const ErrorDescription = "Вид ссылки: (https|http)://(домен)/..."
 
     return (
             <div className={cn(styles.infoBlock)}>
@@ -187,16 +160,17 @@ const Profile: React.FC<ProfilePropsType> = React.memo((): JSX.Element => {
                             </div> :
                             <Formik initialValues={{ lookingForAJob: lookingForAJob ? '1' : '0', fullName: fullName, lookingForAJobDescription: lookingForAJobDescription == '' ? null : lookingForAJobDescription, aboutMe: aboutMe, mainLink: /*!!contacts.mainLink ? */contacts.mainLink/*.substring(selectBeforeValue.length, contacts.mainLink.length - selectAfterValue.length) : null*/, website: contacts.website, facebook: contacts.facebook, github: contacts.github, vk: contacts.vk, instagram: contacts.instagram, youtube: contacts.youtube, twitter: contacts.twitter }}
                             enableReinitialize={true}
+                            validate={validateProfileForm}
                             onSubmit={ async (values, { setSubmitting }) => {                                                 
                                 let contacts: contactsTypes = {
-                                    facebook: returnValue(values.facebook),
-                                    instagram: returnValue(values.instagram),
-                                    vk: returnValue(values.vk),
-                                    youtube: returnValue(values.youtube),
-                                    twitter: returnValue(values.twitter),
-                                    mainLink:  returnValue(values.mainLink),
-                                    github: returnValue(values.github),
-                                    website: returnValue(values.website)
+                                    facebook: values.facebook,
+                                    instagram: values.instagram,
+                                    vk: values.vk,
+                                    youtube: values.youtube,
+                                    twitter: values.twitter,
+                                    mainLink:  values.mainLink,
+                                    github: values.github,
+                                    website: values.website,
                                 }                          
                                 let response = await changeProfile(userId, values.fullName, values.aboutMe as string, Boolean(Number(values.lookingForAJob)), values.lookingForAJobDescription, contacts)
                                 
@@ -209,7 +183,9 @@ const Profile: React.FC<ProfilePropsType> = React.memo((): JSX.Element => {
                                 handleSubmit,
                                 isSubmitting,
                                 handleChange,
-                                setFieldValue
+                                setFieldValue,
+                                errors,
+                                touched
                             }) => (
                             <Form onFinish={handleSubmit} className={cn(styles.form)}>
                                 <Space direction='vertical' size={10}>
@@ -222,14 +198,38 @@ const Profile: React.FC<ProfilePropsType> = React.memo((): JSX.Element => {
                                     <div style={{ fontFamily: 'sans-serif', fontSize: 16 }} className={cn(styles.contacts)}>
                                         <p>Контакты:</p>
                                         <div className={cn(styles.contacts_container)}>
-                                            <Input onChange={ handleChange } addonBefore='https://' addonAfter={<FacebookOutlined />} name="facebook" defaultValue={!!values.facebook ? values.facebook.substring(8) : ''} placeholder="Ссылка на ваш facebook" />
-                                            <Input onChange={ handleChange } addonBefore='https://' addonAfter={<YoutubeOutlined />} name="youtube" defaultValue={!!values.youtube ? values.youtube.substring(8) : ''} placeholder="Ссылка на ваш youtube" />
-                                            <Input onChange={ handleChange } addonBefore='https://' addonAfter={<TwitterOutlined />} name="twitter" defaultValue={!!values.twitter ? values.twitter.substring(8) : ''} placeholder="Ссылка на ваш twitter" />
-                                            <Input onChange={ handleChange } addonBefore='https://' addonAfter={<InstagramOutlined />} name="instagram" defaultValue={!!values.instagram ? values.instagram.substring(8) : ''} placeholder="Ссылка на ваш instagram" />
-                                            <Input onChange={ handleChange } addonBefore='https://' name="vk" defaultValue={!!values.vk ? values.vk.substring(8) : ''} placeholder="Ссылка на ваш ВК" />
-                                            <Input onChange={ handleChange } addonBefore='https://' addonAfter={<GithubOutlined />} name="github" defaultValue={!!values.github ? values.github.substring(8) : ''} placeholder="Ссылка на ваш github" />
-                                            <Input onChange={ handleChange } addonBefore={selectBefore} addonAfter={selectAfter} name="mainLink" defaultValue={values.mainLink as string} placeholder="Ссылка на Ваш сайт" />
-                                            <Input onChange={ handleChange } addonBefore={selectBefore} addonAfter={selectAfter} name="website" defaultValue={!!values.website ? values.website.substring(8) : ''} placeholder="Ссылка на сайт" />
+                                            <div>
+                                                <Input onChange={ handleChange } addonAfter={<FacebookOutlined />} name="facebook" defaultValue={!!values.facebook ? values.facebook : ''} placeholder="Ссылка на ваш facebook" />
+                                                { errors.facebook && touched && <Alert type='error' description={ErrorDescription} message={ errors.facebook } showIcon /> }
+                                            </div>
+                                            <div>
+                                                <Input onChange={ handleChange } addonAfter={<YoutubeOutlined />} name="youtube" defaultValue={!!values.youtube ? values.youtube : ''} placeholder="Ссылка на ваш youtube" />
+                                                { errors.youtube && touched && <Alert type='error' description={ErrorDescription} message={ errors.youtube } showIcon /> }
+                                            </div>
+                                            <div>
+                                                <Input onChange={ handleChange } addonAfter={<TwitterOutlined />} name="twitter" defaultValue={!!values.twitter ? values.twitter : ''} placeholder="Ссылка на ваш twitter" />
+                                                { errors.twitter && touched && <Alert type='error' description={ErrorDescription} message={ errors.twitter } showIcon /> }
+                                            </div>
+                                            <div>
+                                                <Input onChange={ handleChange } addonAfter={<InstagramOutlined />} name="instagram" defaultValue={!!values.instagram ? values.instagram : ''} placeholder="Ссылка на ваш instagram" />
+                                                { errors.instagram && touched && <Alert type='error' description={ErrorDescription} message={ errors.instagram } showIcon /> }
+                                            </div>
+                                            <div>
+                                                <Input onChange={ handleChange } name="vk" defaultValue={!!values.vk ? values.vk : ''} placeholder="Ссылка на ваш ВК" />
+                                                { errors.vk && touched && <Alert type='error' description={ErrorDescription} message={ errors.vk } showIcon /> }
+                                            </div>
+                                            <div>
+                                                <Input onChange={ handleChange } addonAfter={<GithubOutlined />} name="github" defaultValue={!!values.github ? values.github : ''} placeholder="Ссылка на ваш github" />
+                                                { errors.github && touched && <Alert type='error' description={ErrorDescription} message={ errors.github } showIcon /> }
+                                            </div>
+                                            <div>
+                                                <Input onChange={ handleChange } name="mainLink" defaultValue={values.mainLink as string} placeholder="Ссылка на Ваш сайт" />
+                                                { errors.mainLink && touched && <Alert type='error' description={ErrorDescription} message={ errors.mainLink } showIcon /> }
+                                            </div>
+                                            <div>
+                                                <Input onChange={ handleChange } name="website" defaultValue={!!values.website ? values.website : ''} placeholder="Ссылка на сайт" />
+                                                { errors.website && touched && <Alert type='error' description={ErrorDescription} message={ errors.website } showIcon /> }
+                                            </div>
                                         </div>
                                     </div>
                                     <button className={cn(styles.editButton)} disabled={isSubmitting} type='submit'>Сохранить</button>

@@ -1,10 +1,10 @@
 import { Avatar, Form, Input, Button, Divider } from "antd"
 import cn from 'classnames'
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, useMemo } from 'react'
 import { Formik } from 'formik'
 import { DownCircleOutlined } from '@ant-design/icons'
 import { useSelector, useDispatch } from "react-redux"
-import { getMessages } from "../../../selectors/chat-selectors"
+import { getMessages, getStatus } from "../../../selectors/chat-selectors"
 import { appDispatchType } from "../../../redux/store"
 import { ChatMessageType } from "../../../types/types"
 import profileImage from '../../../images/profile-image.jpg'
@@ -13,6 +13,7 @@ import { Link } from "react-router-dom"
 import styles from './Chat.module.sass'
 import Preloader from "../../common/Preloader/Preloader"
 import filter from "../../../validates/common"
+import { StatusType } from "../../../api/ChatApi"
 
 type PropsType = {}
 
@@ -23,7 +24,7 @@ type MessagePropsType = {
     userName: string
 }
 
-const ChatMessage: React.FC<MessagePropsType> = ({ avatar, userId, userName, messageProps }): JSX.Element => {
+const ChatMessage: React.FC<MessagePropsType> = React.memo(({ avatar, userId, userName, messageProps }): JSX.Element => {
     return (
         <div key={ userId }>
             <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
@@ -36,9 +37,9 @@ const ChatMessage: React.FC<MessagePropsType> = ({ avatar, userId, userName, mes
 
         </div>
     )
-} 
+})
 
-const Chat: React.FC<PropsType> = ({}): JSX.Element => {
+const Chat: React.FC<PropsType> = React.memo(({}): JSX.Element => {
 
     const messages: ChatMessageType[] = useSelector(getMessages)
 
@@ -46,6 +47,8 @@ const Chat: React.FC<PropsType> = ({}): JSX.Element => {
 
     const scrollDivRef = useRef<HTMLDivElement>(null)
     const scrollChecker = useRef<HTMLDivElement>(null)
+
+    const status: StatusType = useSelector(getStatus)
 
     let [scrolled, setScrolled] = useState(0)
 
@@ -95,7 +98,9 @@ const Chat: React.FC<PropsType> = ({}): JSX.Element => {
         <div>
             <h1 style={{ fontSize: '25px' }}>Чат</h1>
             <div ref={ scrollChecker } style={{ marginTop: '40px', height: '500px', overflowY: 'scroll' }}>
+                
                 {
+                    status === 'ready' ?
                     messages.map((el, index, array) => {
                         return (
                             <>
@@ -103,7 +108,8 @@ const Chat: React.FC<PropsType> = ({}): JSX.Element => {
                                 { index !== array.length - 1 && <Divider type='horizontal' /> }
                             </>
                         )
-                    })
+                    }) :
+                    <Preloader />
                 }
                 <div ref={ scrollDivRef }></div>
             </div>
@@ -135,6 +141,6 @@ const Chat: React.FC<PropsType> = ({}): JSX.Element => {
             </div>
         </div>
     )
-}
+})
 
 export default Chat
