@@ -66,7 +66,7 @@ const Sidebar: React.FC<props> = (): JSX.Element => {
             </div>
             <Menu onClick={({key}) => {
                 navigate(key)
-            }} theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
+            }} theme="dark" defaultSelectedKeys={[`${window.location.pathname}`]} mode="inline" items={items} />
             { isAuthorized && 
                 <Button danger icon={<LogoutOutlined />} style={{ width: '100%', marginTop: 20, textTransform: 'uppercase', fontWeight: 'bold' }} type='primary' onClick={ () => { onExit() } } >{ !collapsed && 'Выход'}</Button>
             }

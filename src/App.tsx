@@ -50,6 +50,7 @@ const App: React.FC<props> = React.memo(():JSX.Element => {
             <Routes>
               <Route path='/' element={ <Navigate to={`/profile/${userId}`} />} />
               <Route path={`/profile/:userId`} element={ <Profile  /> }/>
+              <Route path={`/profile/`} element={ <Profile  /> }/>
               <Route path={`/users`} element={ <Users /> } />
               <Route path={`/login`} element={ <Login /> } />
               <Route path={`/music`} element={ <Music /> } />

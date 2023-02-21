@@ -1,15 +1,11 @@
-import cn from 'classnames'
-import styles from './Footer.module.sass'
 import { Layout } from 'antd'
 const { Footer } = Layout
 
-type PropsType = {
-
-}
+type PropsType = {}
 
 const FooterComponent: React.FC<PropsType> = ({}): JSX.Element => {
     return (
-        <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+        <Footer style={{ textAlign: 'center' }}>Сайт был создан в качестве пет-проекта. Автор: Никита Коваленко - <a href='https://github.com'>GitHub</a></Footer>
     )
 }
 

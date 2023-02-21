@@ -33,8 +33,8 @@ const Music: React.FC<PropsType> = (): JSX.Element => {
         <div className={ cn(styles.wrapper) }>
             <h1 className={ cn(styles.title) }>Топ 200 треков</h1>
             <div className={ cn(styles.elements) }>
-                { isLoading && <Preloader /> }  
-                { tracks.map(el => {
+                { isLoading ? <Preloader /> :
+                tracks.map(el => {
                     return (
                         <MusicElement key={el.title} trackUri={el.url} trackImage={el.images.coverart} trackName={el.title} />
                     )
