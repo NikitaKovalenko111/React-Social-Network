@@ -2,7 +2,7 @@ import styles from './Users.module.sass'
 import cn from 'classnames'
 import { appDispatchType } from '../../../redux/store'
 import { UserType } from '../../../types/types'
-import { useEffect, useState } from 'react'
+import { ChangeEventHandler, EventHandler, useEffect, useState } from 'react'
 import { followToUserThunk, getUsersThunk, unfollowToUserThunk } from '../../../redux/reducers/users-reducer'
 import Paginator from './Paginator/Paginator'
 import User from './User/User'
@@ -32,13 +32,13 @@ type filterProps = {
 }
 
 const Filter: React.FC<filterProps> = ({ getUsers, count, page, history, term, friend, query }): JSX.Element => {
+
     return (
         <div>
             <Formik
             initialValues={{ term: term, friend: friend !== undefined ? friend : null }}
             enableReinitialize
             onSubmit={ async (values, { setSubmitting }) => {
-
                 const queryObject = {
                     term: values.term,
                     friends: String(values.friend),
@@ -66,8 +66,15 @@ const Filter: React.FC<filterProps> = ({ getUsers, count, page, history, term, f
             }) => (
                 <Form onFinish={ handleSubmit } >
                     <div style={{ display: 'flex' }}>
-                        <Input name='term' onChange={ handleChange } prefix={<SearchOutlined />} placeholder='Поиск' value={ values.term } />
-                        <Select defaultValue={ values.friend === 0 || values.friend === 1 ? String(values.friend) : null } style={{ width: 165 }} onChange={(value) => { setFieldValue('friend', value) }} options={[
+                        <Input name='term' onChange={ (e: any) => {
+                            handleChange(e)
+                            submitForm()
+                        }
+                        } prefix={<SearchOutlined />} placeholder='Поиск' value={ values.term } />
+                        <Select defaultValue={ values.friend === 0 || values.friend === 1 ? String(values.friend) : null } style={{ width: 165 }} onChange={(value) => { 
+                            setFieldValue('friend', value)
+                            submitForm()
+                        }} options={[
                             {
                             value: null,
                             label: 'Все'
@@ -81,7 +88,6 @@ const Filter: React.FC<filterProps> = ({ getUsers, count, page, history, term, f
                             label: 'Только друзья',
                             }
                         ]} />
-                        <Button onClick={ submitForm }>Поиск</Button>
                     </div>
                 </Form>
             )}
@@ -125,20 +131,17 @@ const Users: React.FC<props> = (): JSX.Element => {
         getUsers(actualTerm as string, count, actualPage, Boolean(actualFriend))     
     }, [page, count])
 
-    if (isLoading) {
-        return <Preloader />
-    }
-
     return (
         <div>
             <Filter term={ actualTerm as string } query={ query } friend={ actualFriend } history={ history } getUsers={ getUsers } count={ count } page={ actualPage } />
+            { isLoading ? <Preloader /> :
             <div className={ cn(styles.usersWrapper) }>
            { users.map(el => {
                 return (
                 <User isFollowing={ isFollowing } key={ el.id } el={ el } followToUser={ followToUser } unfollowToUser={ unfollowToUser } />
                 )
             }) }
-            </div>
+            </div> }
             <Paginator term={ actualTerm as string } friend={ actualFriend } history={ history } setCount={ setCount } setPage={ setPage } page={ actualPage } count={ count } totalCount={ totalCount } />
         </div>
     )

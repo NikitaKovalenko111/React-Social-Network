@@ -13,8 +13,6 @@ export enum ActionTypes {
     EXIT = 'auth/EXIT'
 }
 
-//type ActionCreatorsTypes = getMeACType
-
 export type initialStateType = {
     readonly isAuthorized: boolean
     readonly login: string
