@@ -54,7 +54,6 @@ const Sidebar: React.FC<props> = (): JSX.Element => {
         ]),
         getItem('Пользователи', '/users', <TeamOutlined />),
         getItem('Музыка', '/music', <CustomerServiceOutlined />),
-        getItem('Настройки', '/settings', <SettingOutlined />),
       ]
 
     const [collapsed, setCollapsed] = useState(false);
