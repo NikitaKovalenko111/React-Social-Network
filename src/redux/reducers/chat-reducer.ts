@@ -32,7 +32,7 @@ const chatReducer = (state: initialStateType = initialState, action: AnyAction):
         case ActionCreatorsTypes.SET_MESSAGES: {
             return {
                 ...state, 
-                messages: [...state.messages, ...action.messages]
+                messages: [...action.messages]
             }
         }
 

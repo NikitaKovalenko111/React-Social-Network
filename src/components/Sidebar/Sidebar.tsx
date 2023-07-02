@@ -50,7 +50,6 @@ const Sidebar: React.FC<props> = (): JSX.Element => {
         getItem('Профиль', `/profile/${userId}`, <UserOutlined />),
         getItem('Общение', 'messages', <MessageOutlined />, [
           getItem('Чат', '/chat'),
-          getItem('Сообщения', '/messages')
         ]),
         getItem('Пользователи', '/users', <TeamOutlined />),
         getItem('Музыка', '/music', <CustomerServiceOutlined />),
