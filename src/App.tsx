@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { Route, Routes, Navigate } from 'react-router-dom'
 import './App.sass'
@@ -24,44 +24,52 @@ const { Content } = Layout
 
 type props = {}
 
-const App: React.FC<props> = React.memo(():JSX.Element => {
+const App: React.FC<props> = React.memo((): JSX.Element => {
+    const isAuthorized: boolean = useSelector(getIsAuthorizedSelector)
+    const userId: number | null = useSelector(getUserIdSelector)
 
-  const isAuthorized: boolean = useSelector(getIsAuthorizedSelector)
-  const userId: number | null = useSelector(getUserIdSelector)
+    const dispatch: appDispatchType = useDispatch()
 
-  const dispatch: appDispatchType = useDispatch()
+    const getMe = () => {
+        dispatch(getMeThunk())
+    }
 
-  const getMe = () => {
-    dispatch(getMeThunk())
-  }
-  
-  useEffect(() => {
-    getMe()
-  }, [isAuthorized])
+    useEffect(() => {
+        getMe()
+    }, [isAuthorized])
 
-  return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Sidebar />
-      <Layout className="site-layout">
-        <Header />
-        <Content style={{ margin: '0 16px' }}>
-          <BreadCrumbComponent />
-          <div className="site-layout-background" style={{ padding: 24, minHeight: 360, height: '80%' }}>
-            <Routes>
-              <Route path='/' element={ <Navigate to={`/profile/${userId}`} />} />
-              <Route path={`/profile/:userId`} element={ <Profile  /> }/>
-              <Route path={`/profile/`} element={ <Profile  /> }/>
-              <Route path={`/users`} element={ <Users /> } />
-              <Route path={`/login`} element={ <Login /> } />
-              <Route path={`/music`} element={ <Music /> } />
-              <Route path={'/chat'} element={ <Chat /> } />
-            </Routes>
-          </div>
-        </Content>
-        <FooterComponent />
-      </Layout>
-    </Layout>
-  );
+    return (
+        <Layout style={{ minHeight: '100vh' }}>
+            <Sidebar />
+            <Layout className="site-layout">
+                <Header />
+                <Content style={{ margin: '0 16px' }}>
+                    <BreadCrumbComponent />
+                    <div
+                        className="site-layout-background"
+                        style={{ padding: 24, minHeight: 360, height: '80%' }}
+                    >
+                        <Routes>
+                            <Route
+                                path="/"
+                                element={<Navigate to={`/profile/${userId}`} />}
+                            />
+                            <Route
+                                path={'/profile/:userId'}
+                                element={<Profile />}
+                            />
+                            <Route path={'/profile/'} element={<Profile />} />
+                            <Route path={'/users'} element={<Users />} />
+                            <Route path={'/login'} element={<Login />} />
+                            <Route path={'/music'} element={<Music />} />
+                            <Route path={'/chat'} element={<Chat />} />
+                        </Routes>
+                    </div>
+                </Content>
+                <FooterComponent />
+            </Layout>
+        </Layout>
+    )
 })
 
 export default compose()(App) as React.FC

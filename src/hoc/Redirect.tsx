@@ -1,7 +1,7 @@
-import { connect } from "react-redux"
-import React from "react"
-import { Navigate } from "react-router-dom"
-import { appDispatchType, appStateType } from "../redux/store"
+import { connect } from 'react-redux'
+import React from 'react'
+import { Navigate } from 'react-router-dom'
+import { appDispatchType, appStateType } from '../redux/store'
 
 type mstpType = {
     isAuthorized: boolean
@@ -11,7 +11,7 @@ type mdtpType = {}
 
 const mstp = (state: appStateType): mstpType => {
     return {
-        isAuthorized: state.auth.isAuthorized
+        isAuthorized: state.auth.isAuthorized,
     }
 }
 
@@ -20,15 +20,17 @@ const mdtp = (dispatch: appDispatchType): mdtpType => {
 }
 
 function Redirect<PropsType>(PassedComponent: React.ComponentType<PropsType>) {
-
     function RedirectComponent(props: mdtpType & mstpType) {
-
-        let {isAuthorized, ...restProps} = props
+        const { isAuthorized, ...restProps } = props
 
         if (!props.isAuthorized) {
-          return <Navigate to="/login" />  
+            return <Navigate to="/login" />
         }
-        return <PassedComponent {...restProps as PropsType & JSX.IntrinsicAttributes } />
+        return (
+            <PassedComponent
+                {...(restProps as PropsType & JSX.IntrinsicAttributes)}
+            />
+        )
     }
 
     return connect(mstp, mdtp)(RedirectComponent)

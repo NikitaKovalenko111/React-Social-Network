@@ -1,16 +1,19 @@
-import axios, { AxiosInstance } from "axios";
-import { defaultResponseType } from "../types/types";
-import { instance } from "./api";
+import { defaultResponseType } from '../types/types'
+import { instance } from './api'
 
 // TYPES
 
-export interface authAPI {
-    me: () => Promise<meResponseType>
-    exit: () => Promise<exitResponseType>
-    login: (email: string, password: string, saveMe: boolean) => Promise<loginResponseType>
+export interface IAuthAPI {
+    me: () => Promise<IMeResponseType>
+    exit: () => Promise<IExitResponseType>
+    login: (
+        email: string,
+        password: string,
+        saveMe: boolean
+    ) => Promise<ILoginResponseType>
 }
 
-export interface meResponseType extends defaultResponseType {
+export interface IMeResponseType extends defaultResponseType {
     readonly data: {
         id: number
         login: string
@@ -18,19 +21,19 @@ export interface meResponseType extends defaultResponseType {
     }
 }
 
-export interface exitResponseType {
+export interface IExitResponseType {
     readonly status: number
 }
 
-export interface loginResponseType {
+export interface ILoginResponseType {
     readonly status: number
 }
 
 // API
 
-export const AuthAPI: authAPI = {
+export const AuthAPI: IAuthAPI = {
     me: () => {
-        return instance.get('/auth/me').then(response => response.data)
+        return instance.get('/auth/me').then((response) => response.data)
     },
     exit: () => {
         return instance.delete('/auth/login')
@@ -39,7 +42,7 @@ export const AuthAPI: authAPI = {
         return instance.post('/auth/login', {
             email: email,
             password: password,
-            rememberMe: saveMe  
+            rememberMe: saveMe,
         })
-    }
+    },
 }

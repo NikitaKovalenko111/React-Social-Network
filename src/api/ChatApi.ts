@@ -1,13 +1,19 @@
-import { ChatMessageType } from "../types/types"
+import { ChatMessageType } from '../types/types'
 
 let ws: WebSocket | null = null
 
 // TYPES
 
-export interface ChatAPIType {
+export interface IChatAPIType {
     start: () => void
-    subscribe: (callback: MessageSubscribersType | StatusSubscribersType, eventName: EventNames) => void
-    unsubscribe: (callback: MessageSubscribersType | StatusSubscribersType, eventName: EventNames) => void
+    subscribe: (
+        callback: MessageSubscribersType | StatusSubscribersType,
+        eventName: EventNames
+    ) => void
+    unsubscribe: (
+        callback: MessageSubscribersType | StatusSubscribersType,
+        eventName: EventNames
+    ) => void
     sendMessage: (message: string) => void
     stop: () => void
 }
@@ -21,19 +27,21 @@ type SubscribersTypes = MessageSubscribersType & StatusSubscribersType
 // HANDLERS
 
 const notifySubsAboutStatusChanged = (status: StatusType) => {
-    subscribers['status-changed'].forEach(s => s(status))
+    subscribers['status-changed'].forEach((s) => s(status))
 }
 
-const messageHandler = (e: MessageEvent) => { 
+const messageHandler = (e: MessageEvent) => {
     const newMessages = JSON.parse(e.data)
-    subscribers['message-received'].forEach(s => s(newMessages))
+    subscribers['message-received'].forEach((s) => s(newMessages))
 }
 
 const openHandler = () => {
     notifySubsAboutStatusChanged('ready')
 }
 
-const statusHandler = (status: StatusType) => { subscribers['status-changed'].forEach(s => s(status)) }
+const statusHandler = (status: StatusType) => {
+    subscribers['status-changed'].forEach((s) => s(status))
+}
 
 const closeHandler = (e: CloseEvent) => {
     notifySubsAboutStatusChanged('pending')
@@ -49,40 +57,51 @@ const cleanUp = () => {
 const createChannel = () => {
     cleanUp()
     ws?.close()
-    ws = new WebSocket('wss://social-network.samuraijs.com/handlers/ChatHandler.ashx')
+    ws = new WebSocket(
+        'wss://social-network.samuraijs.com/handlers/ChatHandler.ashx'
+    )
     notifySubsAboutStatusChanged('pending')
     ws.addEventListener('close', closeHandler)
     ws.addEventListener('message', messageHandler)
     ws.addEventListener('open', openHandler)
 }
 
-let subscribers = {
+const subscribers = {
     'message-received': [] as MessageSubscribersType[],
-    'status-changed': [] as StatusSubscribersType[]
+    'status-changed': [] as StatusSubscribersType[],
 }
 
 // API
 
-export const ChatAPI: ChatAPIType = {
-
+export const ChatAPI: IChatAPIType = {
     start() {
         createChannel()
     },
 
-    subscribe: (callback: MessageSubscribersType | StatusSubscribersType, eventName: EventNames) => {
+    subscribe: (
+        callback: MessageSubscribersType | StatusSubscribersType,
+        eventName: EventNames
+    ) => {
         // @ts-ignore
-        subscribers[eventName].push(callback) 
+        subscribers[eventName].push(callback)
     },
 
-    unsubscribe: (callback: MessageSubscribersType | StatusSubscribersType, eventName: EventNames) => {
-        switch(eventName) {
+    unsubscribe: (
+        callback: MessageSubscribersType | StatusSubscribersType,
+        eventName: EventNames
+    ) => {
+        switch (eventName) {
             case 'message-received':
                 // @ts-ignore
-                subscribers['message-received'].filter((s: MessageSubscribersType) => s !== callback)
+                subscribers['message-received'].filter(
+                    (s: MessageSubscribersType) => s !== callback
+                )
                 break
             case 'status-changed':
                 // @ts-ignore
-                subscribers['status-changed'].filter((s: StatusSubscribersType) => s !== callback)
+                subscribers['status-changed'].filter(
+                    (s: StatusSubscribersType) => s !== callback
+                )
                 break
             default:
                 break
@@ -98,7 +117,5 @@ export const ChatAPI: ChatAPIType = {
         subscribers['status-changed'] = []
         cleanUp()
         ws?.close()
-    }
-
+    },
 }
-

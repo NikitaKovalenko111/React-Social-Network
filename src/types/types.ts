@@ -1,6 +1,6 @@
-import { ThunkAction } from "redux-thunk"
-import { appStateType } from "../redux/store"
-import { AnyAction } from "redux"
+import { ThunkAction } from 'redux-thunk'
+import { appStateType } from '../redux/store'
+import { AnyAction } from 'redux'
 
 export type profileImagesType = {
     small: string
@@ -15,7 +15,12 @@ export type trackType = {
     url: string
 }
 
-export type ThunkType = ThunkAction<Promise<void> | void, appStateType, undefined, AnyAction>
+export type ThunkType = ThunkAction<
+    Promise<void> | void,
+    appStateType,
+    undefined,
+    AnyAction
+>
 
 export type contactsTypes = {
     [github: string]: string

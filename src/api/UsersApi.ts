@@ -1,17 +1,21 @@
-import axios, { AxiosInstance } from "axios";
-import { defaultResponseType, UserType } from "../types/types";
-import { instance } from "./api";
+import { UserType } from '../types/types'
+import { instance } from './api'
 
 // TYPES
 
-export interface usersAPI {
-    getUsers: (count: number, page: number, term: string, friend: boolean | undefined) => Promise<getUsersResponseType>
-    getFollowStatus: (userId: number) => Promise<getFollowStatusResponseType>
-    followToUser: (userId: number) => Promise<followToUserResponseType>
-    unfollowToUser: (userId: number) => Promise<unfollowToUserResponseType>
+export interface IUsersAPI {
+    getUsers: (
+        count: number,
+        page: number,
+        term: string,
+        friend: boolean | undefined
+    ) => Promise<IGetUsersResponseType>
+    getFollowStatus: (userId: number) => Promise<IGetFollowStatusResponseType>
+    followToUser: (userId: number) => Promise<IFollowToUserResponseType>
+    unfollowToUser: (userId: number) => Promise<IUnfollowToUserResponseType>
 }
 
-export interface getUsersResponseType {
+export interface IGetUsersResponseType {
     readonly status: number
     readonly data: {
         items: Array<UserType>
@@ -20,27 +24,33 @@ export interface getUsersResponseType {
     }
 }
 
-export interface getFollowStatusResponseType {
+export interface IGetFollowStatusResponseType {
     readonly data: boolean
     readonly status: number
 }
 
-export interface followToUserResponseType {
+export interface IFollowToUserResponseType {
     readonly status: number
 }
 
-export interface unfollowToUserResponseType {
+export interface IUnfollowToUserResponseType {
     readonly status: number
 }
 
 // API
 
-export const usersAPI: usersAPI = {
+export const usersAPI: IUsersAPI = {
     getUsers: (count, page, term, friend) => {
-        return instance.get(`/users?count=${count <= 100 ? count : 10}&page=${page}&term=${term}&friend=${friend}`).then(response => response)
+        return instance
+            .get(
+                `/users?count=${
+                    count <= 100 ? count : 10
+                }&page=${page}&term=${term}&friend=${friend}`
+            )
+            .then((response) => response)
     },
     getFollowStatus: (userId: number) => {
-        return instance.get(`/follow/${userId}`).then(response => response)
+        return instance.get(`/follow/${userId}`).then((response) => response)
     },
     followToUser: (userId: number) => {
         return instance.post(`/follow/${userId}`)

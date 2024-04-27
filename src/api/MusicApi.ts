@@ -1,23 +1,25 @@
-import { trackType } from "../types/types";
-import { instanceMusic } from "./api";
+import { trackType } from '../types/types'
+import { instanceMusic } from './api'
 
 // TYPES
 
-export interface getTopTracksResponseType {
+export interface IGetTopTracksResponseType {
     readonly status: number
     readonly data: {
         tracks: Array<trackType>
     }
 }
 
-export interface MusicAPIType {
-    getMostLovedTracks: () => Promise<getTopTracksResponseType>
+export interface IMusicAPIType {
+    getMostLovedTracks: () => Promise<IGetTopTracksResponseType>
 }
 
 // API
 
-export const MusicAPI: MusicAPIType  = {
+export const MusicAPI: IMusicAPIType = {
     getMostLovedTracks: () => {
-        return instanceMusic.get('/songs/list-recommendations').then(response => response);
+        return instanceMusic
+            .get('/songs/list-recommendations')
+            .then((response) => response)
     },
 }

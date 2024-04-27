@@ -1,7 +1,7 @@
-import { AnyAction } from "redux"
-import { ChatMessageType, ThunkType } from "../../types/types"
-import { appDispatchType } from "../store"
-import { ChatAPI, StatusType } from "../../api/ChatApi"
+import { AnyAction } from 'redux'
+import { ChatMessageType, ThunkType } from '../../types/types'
+import { appDispatchType } from '../store'
+import { ChatAPI, StatusType } from '../../api/ChatApi'
 
 // TYPES
 
@@ -17,29 +17,32 @@ export type setMessagesACType = {
 
 export enum ActionCreatorsTypes {
     SET_MESSAGES = 'chat/SET_MESSAGES',
-    SET_STATUS = 'chat/SET_STATUS'
+    SET_STATUS = 'chat/SET_STATUS',
 }
 
 // REDUCER
 
-let initialState: initialStateType = {
+const initialState: initialStateType = {
     messages: [],
-    status: 'pending'
+    status: 'pending',
 }
 
-const chatReducer = (state: initialStateType = initialState, action: AnyAction): initialStateType => {
+const chatReducer = (
+    state: initialStateType = initialState,
+    action: AnyAction
+): initialStateType => {
     switch (action.type) {
         case ActionCreatorsTypes.SET_MESSAGES: {
             return {
-                ...state, 
-                messages: [...action.messages]
+                ...state,
+                messages: [...action.messages],
             }
         }
 
         case ActionCreatorsTypes.SET_STATUS: {
             return {
                 ...state,
-                status: action.status
+                status: action.status,
             }
         }
 
@@ -53,43 +56,49 @@ const chatReducer = (state: initialStateType = initialState, action: AnyAction):
 export const setMessagesAC = (messages: ChatMessageType[]) => {
     return {
         type: ActionCreatorsTypes.SET_MESSAGES,
-        messages: messages
+        messages: messages,
     }
 }
 
 export const setStatusAC = (status: StatusType) => {
     return {
         type: ActionCreatorsTypes.SET_STATUS,
-        status: status
+        status: status,
     }
 }
 
 // HANDLERS
 
-export const newMessageHandler = (dispatch: appDispatchType) => (messages: ChatMessageType[]) => {
-    dispatch(setMessagesAC(messages))
-}
+export const newMessageHandler =
+    (dispatch: appDispatchType) => (messages: ChatMessageType[]) => {
+        dispatch(setMessagesAC(messages))
+    }
 
-export const statusChangedHandler = (dispatch: appDispatchType) => (status: StatusType) => {
-    dispatch(setStatusAC(status))
-}
+export const statusChangedHandler =
+    (dispatch: appDispatchType) => (status: StatusType) => {
+        dispatch(setStatusAC(status))
+    }
 
 // THUNKS
 
-export const startReceivingMessagesThunk = (): ThunkType => (dispatch: appDispatchType) => {
-    ChatAPI.start()
-    ChatAPI.subscribe(newMessageHandler(dispatch), 'message-received')
-    ChatAPI.subscribe(statusChangedHandler(dispatch), 'status-changed')
-}
+export const startReceivingMessagesThunk =
+    (): ThunkType => (dispatch: appDispatchType) => {
+        ChatAPI.start()
+        ChatAPI.subscribe(newMessageHandler(dispatch), 'message-received')
+        ChatAPI.subscribe(statusChangedHandler(dispatch), 'status-changed')
+    }
 
-export const stopReceivingMessagesThunk = (): ThunkType => (dispatch: appDispatchType) => {
-    ChatAPI.unsubscribe(newMessageHandler(dispatch), 'message-received')
-    ChatAPI.unsubscribe(statusChangedHandler(dispatch), 'status-changed')
-    ChatAPI.stop()
-}
+export const stopReceivingMessagesThunk =
+    (): ThunkType => (dispatch: appDispatchType) => {
+        ChatAPI.unsubscribe(newMessageHandler(dispatch), 'message-received')
+        ChatAPI.unsubscribe(statusChangedHandler(dispatch), 'status-changed')
+        ChatAPI.stop()
+    }
 
-export const sendMessageThunk = (message: string): ThunkType => (dispatch: appDispatchType) => {
-    ChatAPI.sendMessage(message)
-}
+export const sendMessageThunk =
+    (message: string): ThunkType =>
+    (dispatch: appDispatchType) => {
+        ChatAPI.sendMessage(message)
+    }
 
 export default chatReducer

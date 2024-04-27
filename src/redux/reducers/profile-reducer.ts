@@ -1,8 +1,7 @@
-import { AnyAction } from "redux"
-import { profileAPI } from "../../api/ProfileApi"
-import { profileImagesType, ThunkType } from "../../types/types"
-import { contactsTypes } from "../../types/types"
-import { appDispatchType } from "../store"
+import { AnyAction } from 'redux'
+import { profileAPI } from '../../api/ProfileApi'
+import { profileImagesType, ThunkType } from '../../types/types'
+import { contactsTypes } from '../../types/types'
 
 ///////////// TYPES ////////////////////////
 
@@ -13,7 +12,7 @@ export enum ActionCreatorsTypes {
     SET_ISOWNER = 'profile/SET_ISOWNER',
     SET_MY_PROFILE_IMAGES = 'profile/SET_MY_PROFILE_IMAGES',
     SET_IS_LOADING = 'profile/SET_IS_LOADING',
-    CHANGE_PROFILE = "profile/CHANGE_PROFILE"
+    CHANGE_PROFILE = 'profile/CHANGE_PROFILE',
 }
 
 export type initialStateType = {
@@ -29,23 +28,23 @@ export type initialStateType = {
     readonly isLoading: boolean
 }
 
-export interface setStatusACTypes {
+export interface ISetStatusACTypes {
     type: typeof ActionCreatorsTypes.SET_STATUS
     status: string
 }
 
-export interface setPhotosACTypes {
+export interface ISetPhotosACTypes {
     type: typeof ActionCreatorsTypes.SET_PHOTOS
     large: string
     small: string
 }
 
-export interface setIsLoadingACTypes {
+export interface ISetIsLoadingACTypes {
     type: typeof ActionCreatorsTypes.SET_IS_LOADING
     value: boolean
 }
 
-export interface getProfileACType {
+export interface IGetProfileACType {
     lookingForAJob: boolean
     aboutMe: string | null
     lookingForAJobDescription: string
@@ -55,38 +54,37 @@ export interface getProfileACType {
     type: typeof ActionCreatorsTypes.GET_PROFILE
 }
 
-export interface setIsOwnerACType {
+export interface ISetIsOwnerACType {
     type: typeof ActionCreatorsTypes.SET_ISOWNER
     isOwner: boolean
 }
 
-export interface changeProfileACType {
+export interface IChangeProfileACType {
     lookingForAJob: boolean
     aboutMe: string | null
     lookingForAJobDescription: string | null
     contacts: contactsTypes
-    //fullName: string
     type: typeof ActionCreatorsTypes.CHANGE_PROFILE
 }
 
-export interface setMyProfileImagesType {
-    type: typeof ActionCreatorsTypes.SET_MY_PROFILE_IMAGES,
+export interface ISetMyProfileImagesType {
+    type: typeof ActionCreatorsTypes.SET_MY_PROFILE_IMAGES
     profileImages: profileImagesType
 }
 
 ///////////// REDUCERS /////////////////////
 
-let initialState: initialStateType = {
+const initialState: initialStateType = {
     isOwner: false,
     myProfileImages: {
         large: '',
-        small: ''
+        small: '',
     },
     aboutMe: '',
     status: '',
     profileImages: {
         large: '',
-        small: ''
+        small: '',
     },
     contacts: {
         github: '',
@@ -96,15 +94,18 @@ let initialState: initialStateType = {
         mainLink: '',
         twitter: '',
         facebook: '',
-        instagram: ''
+        instagram: '',
     },
     lookingForAJob: null,
     lookingForAJobDescription: '',
     fullName: '',
-    isLoading: false
+    isLoading: false,
 }
 
-const ProfileReducer = (state: initialStateType = initialState , action: AnyAction): initialStateType => {
+const ProfileReducer = (
+    state: initialStateType = initialState,
+    action: AnyAction
+): initialStateType => {
     switch (action.type) {
         case ActionCreatorsTypes.CHANGE_PROFILE: {
             return {
@@ -112,34 +113,34 @@ const ProfileReducer = (state: initialStateType = initialState , action: AnyActi
                 aboutMe: action.aboutMe,
                 lookingForAJob: action.lookingForAJob,
                 lookingForAJobDescription: action.lookingForAJobDescription,
-                contacts: action.contacts
+                contacts: action.contacts,
             }
         }
         case ActionCreatorsTypes.SET_STATUS: {
             return {
                 ...state,
-                status: action.status
+                status: action.status,
             }
         }
         case ActionCreatorsTypes.SET_IS_LOADING: {
             return {
                 ...state,
-                isLoading: action.value
+                isLoading: action.value,
             }
         }
         case ActionCreatorsTypes.SET_MY_PROFILE_IMAGES: {
             return {
                 ...state,
-                myProfileImages: action.profileImages
+                myProfileImages: action.profileImages,
             }
         }
         case ActionCreatorsTypes.SET_ISOWNER: {
             return {
                 ...state,
-                isOwner: action.isOwner
+                isOwner: action.isOwner,
             }
         }
-        case ActionCreatorsTypes.GET_PROFILE: {     
+        case ActionCreatorsTypes.GET_PROFILE: {
             return {
                 ...state,
                 profileImages: action.photos,
@@ -147,28 +148,27 @@ const ProfileReducer = (state: initialStateType = initialState , action: AnyActi
                 lookingForAJob: action.lookingForAJob,
                 lookingForAJobDescription: action.lookingForAJobDescription,
                 contacts: action.contacts,
-                aboutMe: action.aboutMe
+                aboutMe: action.aboutMe,
             }
         }
         default:
             return state
     }
-
 }
 
 //////////// ACTION CREATORS ///////////////
 
-export const setStatusAC = (status: string): setStatusACTypes => {
+export const setStatusAC = (status: string): ISetStatusACTypes => {
     return {
         type: ActionCreatorsTypes.SET_STATUS,
-        status: status
+        status: status,
     }
 }
 
-export const setIsLoadingAC = (value: boolean): setIsLoadingACTypes => {
+export const setIsLoadingAC = (value: boolean): ISetIsLoadingACTypes => {
     return {
         type: ActionCreatorsTypes.SET_IS_LOADING,
-        value: value
+        value: value,
     }
 }
 
@@ -180,14 +180,23 @@ export const setIsLoadingAC = (value: boolean): setIsLoadingACTypes => {
     }
 }*/
 
-export const setMyProfileImagesAC = (images: profileImagesType): setMyProfileImagesType => {
+export const setMyProfileImagesAC = (
+    images: profileImagesType
+): ISetMyProfileImagesType => {
     return {
         type: ActionCreatorsTypes.SET_MY_PROFILE_IMAGES,
-        profileImages: images
+        profileImages: images,
     }
 }
 
-export const getProfileAC = (lookingForAJob: boolean, lookingForAJobDescription: string, fullName: string, contacts: contactsTypes, photos: profileImagesType, aboutMe: string): getProfileACType => {
+export const getProfileAC = (
+    lookingForAJob: boolean,
+    lookingForAJobDescription: string,
+    fullName: string,
+    contacts: contactsTypes,
+    photos: profileImagesType,
+    aboutMe: string
+): IGetProfileACType => {
     return {
         type: ActionCreatorsTypes.GET_PROFILE,
         lookingForAJob: lookingForAJob,
@@ -195,24 +204,29 @@ export const getProfileAC = (lookingForAJob: boolean, lookingForAJobDescription:
         contacts: contacts,
         photos: photos,
         fullName: fullName,
-        aboutMe: aboutMe
+        aboutMe: aboutMe,
     }
 }
 
-export const setOwnerAC = (value: boolean): setIsOwnerACType => {
+export const setOwnerAC = (value: boolean): ISetIsOwnerACType => {
     return {
         type: ActionCreatorsTypes.SET_ISOWNER,
-        isOwner: value
+        isOwner: value,
     }
 }
 
-export const changeProfileAC = (contacts: contactsTypes, aboutMe: string, lookingForAJob: boolean, lookingForAJobDescription: string | null): changeProfileACType => {
+export const changeProfileAC = (
+    contacts: contactsTypes,
+    aboutMe: string,
+    lookingForAJob: boolean,
+    lookingForAJobDescription: string | null
+): IChangeProfileACType => {
     return {
         type: ActionCreatorsTypes.CHANGE_PROFILE,
         contacts: contacts,
         aboutMe: aboutMe,
         lookingForAJob: lookingForAJob,
-        lookingForAJobDescription: lookingForAJobDescription
+        lookingForAJobDescription: lookingForAJobDescription,
     }
 }
 
@@ -220,9 +234,9 @@ export const changeProfileAC = (contacts: contactsTypes, aboutMe: string, lookin
 
 export const setStatusThunk = (status: string): ThunkType => {
     return async (dispatch) => {
-        let response = await profileAPI.setStatus(status)
+        const response = await profileAPI.setStatus(status)
         dispatch(setIsLoadingAC(true))
-        
+
         if (response.resultCode === 0) {
             dispatch(setStatusAC(status))
             dispatch(setIsLoadingAC(false))
@@ -230,15 +244,34 @@ export const setStatusThunk = (status: string): ThunkType => {
     }
 }
 
-export const changeProfileThunk = (userId: number | null, fullName: string, aboutMe: string, lookingForAJob: boolean, lookingForAJobDescription: string | null, contacts: contactsTypes): ThunkType => {
-    return async (dispatch) => {      
-        let response = await profileAPI.changeProfile(contacts, fullName, lookingForAJob, lookingForAJobDescription, aboutMe, userId)
+export const changeProfileThunk = (
+    userId: number | null,
+    fullName: string,
+    aboutMe: string,
+    lookingForAJob: boolean,
+    lookingForAJobDescription: string | null,
+    contacts: contactsTypes
+): ThunkType => {
+    return async (dispatch) => {
+        const response = await profileAPI.changeProfile(
+            contacts,
+            fullName,
+            lookingForAJob,
+            lookingForAJobDescription,
+            aboutMe,
+            userId
+        )
         dispatch(setIsLoadingAC(true))
-        console.log(response);
-        
 
         if (response.resultCode === 0) {
-            dispatch(changeProfileAC(contacts, aboutMe, lookingForAJob, lookingForAJobDescription))
+            dispatch(
+                changeProfileAC(
+                    contacts,
+                    aboutMe,
+                    lookingForAJob,
+                    lookingForAJobDescription
+                )
+            )
             dispatch(setIsLoadingAC(false))
         }
     }
@@ -247,7 +280,7 @@ export const changeProfileThunk = (userId: number | null, fullName: string, abou
 export const getStatusThunk = (userId: number): ThunkType => {
     return async (dispatch) => {
         dispatch(setIsLoadingAC(true))
-        let response = await profileAPI.getStatus(userId)
+        const response = await profileAPI.getStatus(userId)
         if (response.status === 200) {
             dispatch(setStatusAC(response.data))
             dispatch(setIsLoadingAC(false))
@@ -255,25 +288,38 @@ export const getStatusThunk = (userId: number): ThunkType => {
     }
 }
 
-export const setPhotosThunk = (file: any): ThunkType => async dispatch => {
-    let response = await profileAPI.setPhoto(file)
-    
-    if (response.resultCode === 0) {
-        dispatch(setMyProfileImagesAC(response.data.photos))
-    }
-}
+export const setPhotosThunk =
+    (file: any): ThunkType =>
+    async (dispatch) => {
+        const response = await profileAPI.setPhoto(file)
 
-export const getProfileThunk = (userId: number, setMyProfileImages?: boolean): ThunkType => async dispatch => {
-    dispatch(setIsLoadingAC(true))
-    let response = await profileAPI.getProfile(userId)
-    
-    if (response.status === 200) {
-        dispatch(getProfileAC(response.data.lookingForAJob, response.data.lookingForAJobDescription, response.data.fullName, response.data.contacts, response.data.photos, response.data.aboutMe))
-        if (setMyProfileImages) 
+        if (response.resultCode === 0) {
             dispatch(setMyProfileImagesAC(response.data.photos))
-        dispatch(setIsLoadingAC(false))
+        }
     }
-}
+
+export const getProfileThunk =
+    (userId: number, setMyProfileImages?: boolean): ThunkType =>
+    async (dispatch) => {
+        dispatch(setIsLoadingAC(true))
+        const response = await profileAPI.getProfile(userId)
+
+        if (response.status === 200) {
+            dispatch(
+                getProfileAC(
+                    response.data.lookingForAJob,
+                    response.data.lookingForAJobDescription,
+                    response.data.fullName,
+                    response.data.contacts,
+                    response.data.photos,
+                    response.data.aboutMe
+                )
+            )
+            if (setMyProfileImages)
+                dispatch(setMyProfileImagesAC(response.data.photos))
+            dispatch(setIsLoadingAC(false))
+        }
+    }
 
 //////////////////////////////////////////
 

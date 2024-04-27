@@ -10,7 +10,7 @@ type initialStateType = {
 }
 
 export enum ActionCreatorsTypes {
-    SET_TOP_TRACKS = "music/SET_TOP_TRACKS"
+    SET_TOP_TRACKS = 'music/SET_TOP_TRACKS',
 }
 
 type SetTopTracksACType = {
@@ -20,15 +20,18 @@ type SetTopTracksACType = {
 
 // REDUCER
 
-let initialState: initialStateType = {
-    TopTracks: []
+const initialState: initialStateType = {
+    TopTracks: [],
 }
 
-const musicReducer = (state: initialStateType = initialState, action: AnyAction): initialStateType => {
+const musicReducer = (
+    state: initialStateType = initialState,
+    action: AnyAction
+): initialStateType => {
     switch (action.type) {
         case ActionCreatorsTypes.SET_TOP_TRACKS:
-            return {...state, TopTracks: action.tracks}
-    
+            return { ...state, TopTracks: action.tracks }
+
         default:
             return state
     }
@@ -36,19 +39,21 @@ const musicReducer = (state: initialStateType = initialState, action: AnyAction)
 
 // ACTION CREATORS
 
-export const SetTopTracksAC = (tracks: Array<trackType>): SetTopTracksACType => {
+export const SetTopTracksAC = (
+    tracks: Array<trackType>
+): SetTopTracksACType => {
     return {
         type: ActionCreatorsTypes.SET_TOP_TRACKS,
-        tracks: tracks
+        tracks: tracks,
     }
 }
 
 // THUNKS
 
-export const getTopTracksThunk = (): ThunkType => async dispatch => {
+export const getTopTracksThunk = (): ThunkType => async (dispatch) => {
     dispatch(setIsLoadingAC(true))
-    let response = await MusicAPI.getMostLovedTracks()
-    
+    const response = await MusicAPI.getMostLovedTracks()
+
     if (response.status === 200) {
         dispatch(SetTopTracksAC(response.data.tracks))
         dispatch(setIsLoadingAC(false))

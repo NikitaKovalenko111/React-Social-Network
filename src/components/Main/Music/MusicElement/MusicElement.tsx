@@ -7,11 +7,15 @@ type PropsType = {
     trackUri: string
 }
 
-const MusicElement: React.FC<PropsType> = ({ trackImage, trackName, trackUri }): JSX.Element => {
+const MusicElement: React.FC<PropsType> = ({
+    trackImage,
+    trackName,
+    trackUri,
+}): JSX.Element => {
     return (
-        <div className={ cn(styles.elementWrapper) }>
-            <img src={ trackImage } alt="trackImage" />
-            <a href={ trackUri }>{ trackName }</a>
+        <div className={cn(styles.elementWrapper)}>
+            <img src={trackImage} alt="trackImage" />
+            <a href={trackUri}>{trackName}</a>
         </div>
     )
 }
